@@ -1,0 +1,12 @@
+---
+- name: Ensure we get ceph repositories if needed
+  tags:
+    - lab
+    - undercloud-bootstrap
+  when:
+    - vms|map(attribute='name')|select("match", '^ceph')|list|length > 0
+    - '"ceph" not in tripleo_repos_repos'
+  debug:
+    msg: |
+      Remember to add the ceph repository later on the undercloud later
+      Not failing to workaround http://paste.openstack.org/show/793929 
