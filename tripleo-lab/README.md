@@ -12,8 +12,6 @@ which is running centos8.
  cat inventory.yaml.example | sed s/IP_ADDRESS/127.0.0.1/g > inventory.yaml
 
  cp ~/victoria/tripleo-lab/overrides.yml environments/overrides.yml
- cp ~/victoria/tripleo-lab/roles_validations_tasks_main.yaml roles/validations/tasks/main.yaml
- cp ~/victoria/tripleo-lab/roles_undercloud_tasks_packages.yaml roles/undercloud/tasks/packages.yaml
 
  ansible -i inventory.yaml -m ping builder
 

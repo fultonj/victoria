@@ -5,12 +5,15 @@ tripleo_repos_branch: master
 overclouds: 1
 num_osds: 4
 
-# comment this out because of http://paste.openstack.org/show/793929
-# tripleo_repos_repos: 'ceph'
+tripleo_repos_repos:
+  - ceph
+  - current-tripleo
 
 # from centos-8.yaml
 package_use: dnf
 python_version: 3
+
+# tripleo_undercloud_install_home_dir: /home/stack
 
 # from metalsmith.yaml
 tripleo_overcloud_node_provision_concurrency: 2
