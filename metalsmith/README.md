@@ -116,45 +116,35 @@ but just put into the context of what I find when using tripleo-lab.
 ## Topologies
 
 I normally use tripleo-lab to get a working undercloud with
-introspected VMs and do everything else myself.
+introspected VMs and do everything else myself. tripleo-lab
+assumes that what you have under `vms` for 
+[tripleo-lab/overrides.yml](../tripleo-lab/overrides.yml)
+is what you're actually going to deploy. This used to be no 
+problem for me as it didn't actually deploy the baremetal that way in
+one shot. Now that they're tightly coupled my current approach is:
 
-I used to ask for 3 controllers and 6 ceph storage servers in order 
-to get the type of virtual hardware I wanted but then I'd deployment
-like this using three stacks:
+- Let tripleo-lab provision all the virtual hardware to confirm
+  metalsmith is working
+- Login to the undercloud for the first time
+- Take the hardware down `openstack overcloud node unprovision --all --stack oc0 ~/metalsmith-0.yaml`
+- Maintain a set of toplogies to deploy different combinations of the
+  virtual hardware
+- For every type of deployment kept in this repo, directly reference
+  the appropriate topology file
 
-```
-+------------------+
-| control-plane    |    GlanceBackend: RBD | CephClusterName: central
-+------------------+
-| oc0-controller-0 |    Controller (Glance + Mon)
-| oc0-controller-1 |    Controller (Glance + Mon)
-| oc0-controller-2 |    Controller (Glance + Mon)
-| oc0-ceph-0       |    ComputeHCI (Nova + OSD)
-+------------------+
+I have the following topologies:
 
-+------------------+
-| dcn0             |    Standard DCN + GlanceBackend: RBD | CephClusterName: dcn0
-+------------------+
-| oc0-ceph-1       |    DistributedComputeHCI (Glance + Nova + Mon + OSD)
-| oc0-ceph-2       |    DistributedComputeHCIScaleOut (HaProxy + Nova + OSD)
-+------------------+
+- [standard.yaml](standard.yaml)
+- [standard-small.yaml](standard-small.yaml)
+- [control-plane.yaml](control-plane.yaml)
+- [dcn0.yaml](dcn0.yaml)
+- [dcn1.yaml](dcn1.yaml)
 
-+------------------+
-| dcn1             |    Standard DCN + GlanceBackend: RBD | CephClusterName: dcn1
-+------------------+
-| oc0-ceph-3       |    DistributedComputeHCI (Glance + Nova + Mon + OSD)
-| oc0-ceph-4       |    DistributedComputeHCIScaleOut (HaProxy + Nova + OSD)
-+------------------+
-```
+My [standard](../standard) deploy script directly references my
+[standard-small.yaml](standard-small.yaml) in it's `openstack
+overcloud node provision` command.
 
-Thus, I might do one of the following to move into the metalsmith way
-of doing things.
-
-1. Update my [tripleo-lab/overrides.yml](../tripleo-lab/overrides.yml)
-   to define something closer to the above with multiple overclouds so 
-   that it can still do everything for me.
-   
-2. Save a bunch of different topologies in this metalsmith directory
-   which are derivative works of the generated 
-   [metalsmith-0.yaml](metalsmith-0.yaml) which distribute the
-   nodes into different roles.
+I might go back and update my
+[tripleo-lab/overrides.yml](../tripleo-lab/overrides.yml)
+so that I'm using tripleo-lab more efficiently but this is working for
+me for now.

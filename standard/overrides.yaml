@@ -1,0 +1,41 @@
+---
+parameter_defaults:
+  ContainerHealthcheckDisabled: true
+  EnablePaunch: False
+  ConfigDebug: True
+  NtpServer: pool.ntp.org
+  OvercloudControlFlavor: baremetal
+  OvercloudComputeFlavor: baremetal
+  OvercloudCephStorageFlavor: baremetal
+  # Ceph
+  CephAnsiblePlaybookVerbosity: 3
+  CephPoolDefaultSize: 1
+  CephPoolDefaultPgNum: 32
+  # testing fix to https://review.opendev.org/#/q/topic:bug/1863809
+  # LocalCephAnsibleFetchDirectoryBackup: /tmp/fetch_dir
+  CephAnsibleEnvironmentVariables:
+    ANSIBLE_SSH_CONTROL_PATH: '/home/stack/ansible-ssh'
+    ANSIBLE_HOST_KEY_CHECKING: 'False'
+  CephAnsibleDisksConfig:
+    osd_scenario: lvm
+    osd_objectstore: bluestore
+    devices:
+      - /dev/sda
+      - /dev/sdb
+      - /dev/sdc
+      - /dev/sdd
+  CephAnsibleExtraConfig:
+    ceph_osd_docker_cpu_limit: 1
+    # is_hci: true
+    #mon_host_v1: { 'enabled': False }
+  ## Set relative to your hardware:
+  ##   https://red.ht/2pxAhVW
+  # ComputeHCIParameters:
+  #   NovaReservedHostMemory: 181000
+  # ComputeHCIExtraConfig:
+  #   nova::cpu_allocation_ratio: 8.2
+  CephConfigOverrides:
+    osd_recovery_op_priority: 3
+    osd_recovery_max_active: 3
+    osd_max_backfills: 1
+  CephAnsibleRepo: tripleo-centos-ceph-nautilus
