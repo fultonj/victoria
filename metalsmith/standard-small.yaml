@@ -2,15 +2,15 @@
 - name: Controller
   count: 1
   instances:
-    - hostname: controller-0
+    - hostname: overcloud-controller-0
       name: oc0-controller-0
 - name: CephStorage
   count: 1
   instances:
-    - hostname: ceph-0
+    - hostname: overcloud-cephstorage-0
       name: oc0-ceph-0
 - name: Compute
   count: 1
   instances:
-    - hostname: ceph-1
+    - hostname: overcloud-novacompute-0
       name: oc0-ceph-1

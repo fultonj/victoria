@@ -3,10 +3,12 @@
 METAL=0
 HEAT=0
 DOWN=0
+CHECK=1
 CONF=1
 
 STACK=overcloud
 DIR=config-download
+NODE_COUNT=3
 
 source ~/stackrc
 # -------------------------------------------------------
@@ -15,7 +17,7 @@ if [[ $METAL -eq 1 ]]; then
     openstack overcloud node provision \
               --stack overcloud \
               --output overcloud-baremetal-deployed.yaml \
-              ../metalsmith/standard-small.yaml 
+              ../metalsmith/standard-small.yaml
 fi
 # -------------------------------------------------------
 # `openstack overcloud -v` should be passed along as
@@ -27,6 +29,11 @@ if [[ $HEAT -eq 1 ]]; then
     # 7 minutes
     if [[ ! -d ~/templates ]]; then
         ln -s /usr/share/openstack-tripleo-heat-templates templates
+    fi
+    FOUND_COUNT=$(metalsmith -f value -c "Hostname" list | wc -l)
+    if [[ $NODE_COUNT != $FOUND_COUNT ]]; then
+        echo "Expecting $NODE_COUNT nodes but $FOUND_COUNT nodes have been deployed"
+        exit 1
     fi
     time openstack overcloud -v deploy \
          --stack $STACK \
@@ -98,6 +105,20 @@ if [[ $DOWN -eq 1 ]]; then
 	echo "pushd $DIR"
 	echo 'ansible -i inventory.yaml all -m shell -b -a "hostname"'
     fi
+fi
+# -------------------------------------------------------
+if [[ $CHECK -eq 1 ]]; then
+    pushd $DIR
+    ansible -i tripleo-ansible-inventory.yaml -m ping ceph_mon
+    ansible -i tripleo-ansible-inventory.yaml -m ping ceph_client
+    ansible -i tripleo-ansible-inventory.yaml -m ping ceph_osd
+    grep ceph tripleo-ansible-inventory.yaml
+    if [[ $(grep osd tripleo-ansible-inventory.yaml  | wc -l) == 0 ]]; then
+        echo "There are no OSDs in the inventory so the deployment will fail."
+        echo "Exiting early."
+        exit 1
+    fi
+    popd
 fi
 # -------------------------------------------------------
 if [[ $CONF -eq 1 ]]; then
