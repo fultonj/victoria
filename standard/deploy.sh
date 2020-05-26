@@ -2,8 +2,8 @@
 
 METAL=0
 HEAT=0
-DOWN=1
-CONF=0
+DOWN=0
+CONF=1
 
 STACK=overcloud
 DIR=config-download
@@ -68,21 +68,29 @@ if [[ $DOWN -eq 1 ]]; then
 	echo "tripleo-config-download cmd didn't create $DIR"
     else
 	pushd $DIR
-	tripleo-ansible-inventory --static-yaml-inventory tripleo-ansible-inventory.yaml --stack $STACK
+        if [[ ! -e ansible.cfg ]]; then
+            # Assume I don't yet have https://review.opendev.org/#/c/725602
+            echo "Genereating ansible.cfg in $PWD"
+            openstack tripleo config generate ansible
+            if [[ -e ~/ansible.cfg ]]; then
+                mv -v ~/ansible.cfg ansible.cfg 
+            fi
+            if [[ ! -e ansible.cfg ]]; then
+                echo "Unable to create ansible.cfg. Giving up."
+                exit 1
+            fi
+        fi
+	tripleo-ansible-inventory --static-yaml-inventory \
+                                  tripleo-ansible-inventory.yaml \
+                                  --stack $STACK
 	if [[ ! -e tripleo-ansible-inventory.yaml ]]; then
-	    echo "No inventory. Giving up."
+	    echo "Unable to create inventory. Giving up."
 	    exit 1
 	fi
         ln -s tripleo-ansible-inventory.yaml inventory.yaml
         echo "Ensure ~/.ssh/id_rsa_tripleo exists"
 	if [[ ! -e ~/.ssh/id_rsa_tripleo ]]; then
             cp ~/.ssh/id_rsa ~/.ssh/id_rsa_tripleo
-        fi
-        # avoid https://review.opendev.org/#/c/725602 for now
-        find . -type f -name ansible.cfg -exec rm -fv {} \;
-        if [[ -e /home/stack/ansible.cfg ]]; then
-            echo "Running ansible with ANSIBLE_CONFIG=$ANSIBLE_CONFIG"
-            echo "export ANSIBLE_CONFIG=/home/stack/ansible.cfg"
         fi
         echo "Test ansible ping"
 	ansible -i tripleo-ansible-inventory.yaml all -m ping
@@ -97,21 +105,19 @@ if [[ $CONF -eq 1 ]]; then
 	echo "tripleo-config-download cmd didn't create $DIR"
         exit 1;
     fi
-
     #echo "about to execute the following plays:"
     #ansible-playbook $DIR/deploy_steps_playbook.yaml --list-tasks
-
-    echo "Running ansible with ANSIBLE_CONFIG=$ANSIBLE_CONFIG"
+    pushd $DIR
     time ansible-playbook-3 \
 	 -v \
 	 --ssh-extra-args "-o StrictHostKeyChecking=no" --timeout 240 \
 	 --become \
-	 -i $DIR/tripleo-ansible-inventory.yaml \
-         --private-key $DIR/ssh_private_key \
-	 $DIR/deploy_steps_playbook.yaml
+	 -i tripleo-ansible-inventory.yaml \
+         --private-key ~/.ssh/id_rsa_tripleo \
+	 deploy_steps_playbook.yaml
 
          # Just re-run ceph
-         # -e gather_facts=true -e @$DIR/global_vars.yaml \
+         # -e gather_facts=true -e @global_vars.yaml \
          # --tags external_deploy_steps \
     
          # Test validations
@@ -119,5 +125,5 @@ if [[ $CONF -eq 1 ]]; then
     
          # Pick up after good ceph install (need to test this)
          # --tags step2,step3,step4,step5,post_deploy_steps,external --skip-tags ceph
-
+   popd
 fi
