@@ -1,8 +1,8 @@
 #!/bin/bash
 
 METAL=0
-HEAT=1
-DOWN=0
+HEAT=0
+DOWN=1
 CONF=0
 
 STACK=overcloud
@@ -24,6 +24,7 @@ fi
 # and --quiet being 0)
 # -------------------------------------------------------
 if [[ $HEAT -eq 1 ]]; then
+    # 7 minutes
     if [[ ! -d ~/templates ]]; then
         ln -s /usr/share/openstack-tripleo-heat-templates templates
     fi
@@ -67,20 +68,25 @@ if [[ $DOWN -eq 1 ]]; then
 	echo "tripleo-config-download cmd didn't create $DIR"
     else
 	pushd $DIR
-	tripleo-ansible-inventory --static-yaml-inventory inventory.yaml --stack $STACK
-	if [[ ! -e inventory.yaml ]]; then
+	tripleo-ansible-inventory --static-yaml-inventory tripleo-ansible-inventory.yaml --stack $STACK
+	if [[ ! -e tripleo-ansible-inventory.yaml ]]; then
 	    echo "No inventory. Giving up."
 	    exit 1
 	fi
+        ln -s tripleo-ansible-inventory.yaml inventory.yaml
         echo "Ensure ~/.ssh/id_rsa_tripleo exists"
 	if [[ ! -e ~/.ssh/id_rsa_tripleo ]]; then
             cp ~/.ssh/id_rsa ~/.ssh/id_rsa_tripleo
         fi
+        # avoid https://review.opendev.org/#/c/725602 for now
+        find . -type f -name ansible.cfg -exec rm -fv {} \;
+        if [[ -e /home/stack/ansible.cfg ]]; then
+            echo "Running ansible with ANSIBLE_CONFIG=$ANSIBLE_CONFIG"
+            echo "export ANSIBLE_CONFIG=/home/stack/ansible.cfg"
+        fi
         echo "Test ansible ping"
-        echo "Running ansible with ANSIBLE_CONFIG=$ANSIBLE_CONFIG"
-	ansible -i inventory.yaml all -m ping
-	popd
-        echo "export ANSIBLE_CONFIG=/home/stack/ansible.cfg"
+	ansible -i tripleo-ansible-inventory.yaml all -m ping
+	popd        
 	echo "pushd $DIR"
 	echo 'ansible -i inventory.yaml all -m shell -b -a "hostname"'
     fi
@@ -100,7 +106,7 @@ if [[ $CONF -eq 1 ]]; then
 	 -v \
 	 --ssh-extra-args "-o StrictHostKeyChecking=no" --timeout 240 \
 	 --become \
-	 -i $DIR/inventory.yaml \
+	 -i $DIR/tripleo-ansible-inventory.yaml \
          --private-key $DIR/ssh_private_key \
 	 $DIR/deploy_steps_playbook.yaml
 
