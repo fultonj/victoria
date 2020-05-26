@@ -41,14 +41,13 @@ if [[ $HEAT -eq 1 ]]; then
          -e ~/templates/environments/enable-swap.yaml \
          -e ~/templates/environments/podman.yaml \
          -e ~/templates/environments/ceph-ansible/ceph-ansible.yaml \
-         -e ~/generated-container-prepare.yaml
+         -e ~/generated-container-prepare.yaml \
          -e ~/domain.yaml \
          -e ~/victoria/standard/overrides.yaml \
-         --libvirt-type qemu 2>&1 | tee -a ~/install-overcloud.log
+         --stack-only \
+         --libvirt-type qemu
 
          # remove --stack-only to make DOWN and CONF unnecessary...
-         # But --stack-only --no-config-download are broken for now
-         # https://bugs.launchpad.net/tripleo/+bug/1880577
 fi
 # -------------------------------------------------------
 if [[ $DOWN -eq 1 ]]; then
