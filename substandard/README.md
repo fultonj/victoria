@@ -2,7 +2,7 @@
 
 ## What do you get
 
-An overcloud deployed without network isolation containing:
+An overcloud deployed with network isolation containing:
 
 - 1 controller
 - 1 compute

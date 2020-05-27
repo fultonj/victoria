@@ -38,8 +38,12 @@ if [[ $HEAT -eq 1 ]]; then
     time openstack overcloud -v deploy \
          --stack $STACK \
          --templates ~/templates/ \
+         -n ../network-data.yaml \
          -e ~/templates/environments/deployed-server-environment.yaml \
          -e deployed-metal.yaml \
+         -e ~/templates/environments/net-multiple-nics.yaml \
+         -e ~/templates/environments/network-isolation.yaml \
+         -e ~/templates/environments/network-environment.yaml \
          -e ~/templates/environments/disable-telemetry.yaml \
          -e ~/templates/environments/low-memory-usage.yaml \
          -e ~/templates/environments/enable-swap.yaml \
@@ -103,6 +107,7 @@ if [[ $DOWN -eq 1 ]]; then
 fi
 # -------------------------------------------------------
 if [[ $CONF -eq 1 ]]; then
+    # 32 minutes
     if [[ ! -d $DIR ]]; then
 	echo "tripleo-config-download cmd didn't create $DIR"
         exit 1;
