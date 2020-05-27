@@ -1,9 +1,4 @@
 #!/usr/bin/env bash
-# Filename:                git-init.sh
-# Description:             configures my git env
-# Supported Langauge(s):   GNU Bash 4.2.x
-# Time-stamp:              <2019-11-15 08:57:36 fultonj> 
-# -------------------------------------------------------
 # Clones the repos that I am interested in.
 # -------------------------------------------------------
 if [[ $1 == 'tht' ]]; then
@@ -116,9 +111,12 @@ if [[ $1 == 'tht' ]]; then
         popd
     fi
     popd
+fi
+# -------------------------------------------------------
+if [[ $1 == 'alias' ]]; then
     if [[ -e /home/stack/stackrc ]]; then
         echo 'source /home/stack/stackrc' >> ~/.bashrc
     fi
-    echo 'alias os=openstack' >> ~/.bashrc    
+    echo 'alias os=openstack' >> ~/.bashrc
+    echo 'alias ms=metalsmith' >> ~/.bashrc
 fi
-# -------------------------------------------------------
