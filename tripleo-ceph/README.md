@@ -26,3 +26,9 @@ Set flags to 0 or 1 in [deploy.sh](deploy.sh) to enable the following:
 ## Status
 
 - We can bootstap a ceph-mon and ceph-mgr on a controller node with cephadm
+
+## Notes
+
+- https://download.ceph.com/rpm-octopus/el8/x86_64/
+- https://github.com/ceph/ceph/pull/35195
+- https://github.com/ceph/ceph/pull/34879
