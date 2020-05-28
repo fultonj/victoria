@@ -4,6 +4,18 @@ parameter_defaults:
   EnablePaunch: False
   ConfigDebug: True
   NtpServer: pool.ntp.org
+  # Ceph server
+  ExtraFirewallRules:
+    '110 allow ceph_mon_v1':
+      dport: [6789]
+      proto: tcp
+    '111 allow ceph_mon_v2':
+      dport: [3300]
+      proto: tcp
+    '112 allow ceph_mgr and ceph_osd':
+      dport: [6800-7300]
+      proto: tcp
+  # Ceph client
   CephClusterFSID: '4b5c8c0a-ff60-454b-a1b4-9747aa737d19'
   CephClientKey: 'AQDLOh1VgEp6FRAAFzT7Zw+Y9V6JJExQAsRnRQ=='
-  CephExternalMonHost: '172.16.1.7, 172.16.1.8'
+  CephExternalMonHost: '172.16.11.107'
