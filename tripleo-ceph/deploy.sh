@@ -1,9 +1,9 @@
 #!/bin/bash
 
-METAL=0
-HEAT=0
-DOWN=0
-NET=0
+METAL=1
+HEAT=1
+DOWN=1
+NET=1
 CEPH=1
 CONF=0
 
