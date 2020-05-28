@@ -25,4 +25,4 @@ Set flags to 0 or 1 in [deploy.sh](deploy.sh) to enable the following:
 
 ## Status
 
-- Just getting started...
+- We can bootstap a ceph-mon and ceph-mgr on a controller node with cephadm

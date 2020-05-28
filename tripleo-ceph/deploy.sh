@@ -1,10 +1,10 @@
 #!/bin/bash
 
 METAL=0
-HEAT=1
-DOWN=1
-NET=1
-CEPH=0
+HEAT=0
+DOWN=0
+NET=0
+CEPH=1
 CONF=0
 
 STACK=oc0
@@ -107,6 +107,7 @@ if [[ ! -d $DIR ]]; then
 fi
 # -------------------------------------------------------
 if [[ $NET -eq 1 ]]; then
+    # 13 minutes
     pushd $DIR
     time ansible-playbook-3 \
 	 -v -b -i tripleo-ansible-inventory.yaml \
@@ -117,11 +118,23 @@ if [[ $NET -eq 1 ]]; then
 fi
 # -------------------------------------------------------
 if [[ $CEPH -eq 1 ]]; then
-    echo "Need to deploy ceph"
-    # - ansible-playbook undercloud_prepare.yaml
-    # - ansible-playbook -i inventory bootstrap.yaml
-    # - ansible-playbook -i inventory copy_cephadm_pub.key.yaml
-    # - add an OSD the ceph-adm way on the compute node
+    pushd $DIR
+    echo "Show storage network"
+    ansible -m shell -b -a "ip -o -4 a | grep -E 'vlan1(1|2)'" -i tripleo-ansible-inventory.yaml Controller,Compute
+    echo "Create $DIR/cephadm with an inventory and playbooks"
+    if [[ ! -d cephadm ]]; then mkdir cephadm; fi
+    cp tripleo-ansible-inventory.yaml cephadm/inventory.yaml
+    sed -i cephadm/inventory.yaml -e s/Controller/mons/g -e s/Compute/osds/g
+    cp ../ansible/*.yaml cephadm/
+    pushd cephadm
+    ansible -i inventory.yaml -m ping mons,osds
+    echo "bootstrap ceph"
+    ansible-playbook -vv -i inventory.yaml bootstrap.yaml
+    echo "copy ceph key"
+    ansible-playbook -vv -i inventory.yaml copy_cephadm_pub.key.yaml
+    echo "add osd (broken)"
+    # ansible-playbook -vv -i inventory.yaml osds.yaml
+    popd
 fi
 # -------------------------------------------------------
 if [[ $CONF -eq 1 ]]; then
