@@ -132,19 +132,17 @@ one shot. Now that they're tightly coupled my current approach is:
 - For every type of deployment kept in this repo, directly reference
   the appropriate topology file
 
-I have the following topologies:
+Each of the following example deployments in this repository either
+has or will have an example toplogy file.
 
-- [standard.yaml](standard.yaml)
-- [standard-small.yaml](standard-small.yaml)
-- [control-plane.yaml](control-plane.yaml)
-- [dcn0.yaml](dcn0.yaml)
-- [dcn1.yaml](dcn1.yaml)
+- [substandard](../substandard): 3 controllers, 2 computes (or 1 of each)
+- [standard](../standard): 3 controllers, 2 computes, 3 ceph-storage (or 1 of each) with ceph-ansible 
+- [tripleo-cephadm](../tripleo-cephadm): 3 controllers, 2 computes, 3 ceph-storage (or 1 of each) with [tripleo-cephadm](https://review.opendev.org/#/c/723108)
+- [dcn](../dcn): DCN deployment with three toplogy files for three different stacks
 
-My [standard](../standard) deploy script directly references my
-[standard-small.yaml](standard-small.yaml) in it's `openstack
-overcloud node provision` command.
-
-I might go back and update my
-[tripleo-lab/overrides.yml](../tripleo-lab/overrides.yml)
+For example, my [substandard deploy script](../substandard/deploy.sh)
+directly references it's own [topology file](../substandard/metal-big.yaml)
+in it's `openstack overcloud node provision` command. I might go back
+and update my [tripleo-lab/overrides.yml](../tripleo-lab/overrides.yml)
 so that I'm using tripleo-lab more efficiently but this is working for
 me for now.
