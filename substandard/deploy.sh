@@ -7,17 +7,17 @@ CONF=1
 
 STACK=oc0
 DIR=config-download
-NODE_COUNT=2
+NODE_COUNT=5
 
 source ~/stackrc
 # -------------------------------------------------------
 if [[ $METAL -eq 1 ]]; then
     # 4 minutes
-    mv -v deployed-metal.yaml deployed-metal.yaml.example
+    mv -v deployed-metal-big.yaml deployed-metal-big.yaml.example
     openstack overcloud node provision \
               --stack $STACK \
-              --output deployed-metal.yaml \
-              metal.yaml
+              --output deployed-metal-big.yaml \
+              metal-big.yaml
 fi
 # -------------------------------------------------------
 # `openstack overcloud -v` should be passed along as
@@ -40,7 +40,7 @@ if [[ $HEAT -eq 1 ]]; then
          --templates ~/templates/ \
          -n ../network-data.yaml \
          -e ~/templates/environments/deployed-server-environment.yaml \
-         -e deployed-metal.yaml \
+         -e deployed-metal-big.yaml \
          -e ~/templates/environments/net-multiple-nics.yaml \
          -e ~/templates/environments/network-isolation.yaml \
          -e ~/templates/environments/network-environment.yaml \
