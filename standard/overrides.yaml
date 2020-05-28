@@ -4,9 +4,6 @@ parameter_defaults:
   EnablePaunch: False
   ConfigDebug: True
   NtpServer: pool.ntp.org
-  OvercloudControlFlavor: baremetal
-  OvercloudComputeFlavor: baremetal
-  OvercloudCephStorageFlavor: baremetal
   # Ceph
   CephAnsiblePlaybookVerbosity: 3
   CephPoolDefaultSize: 1

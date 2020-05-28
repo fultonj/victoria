@@ -4,15 +4,13 @@
 
 An overcloud deployed with network isolation containing:
 
-- 1 controller
-- 1 compute
-- 1 ceph-storage
+- 3 controller
+- 2 compute
+- 3 ceph-storage
 
-You get the above because of 
-[standard-small.yaml](../metalsmith/standard-small.yaml).
-You can also have a respective 3,2,3 node count distribution as per
-[standard.yaml](../metalsmith/standard.yaml). All overrides are in
-[overrides.yaml](overrides.yaml).
+It uses [metal.yaml](metal.yaml) which is a minimal topology with
+three nodes or [metal-big.yaml](metal-big.yaml) which deploys eight
+nodes. All overrides are in [overrides.yaml](overrides.yaml).
 
 ## How to do it
 

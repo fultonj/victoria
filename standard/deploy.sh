@@ -1,23 +1,23 @@
 #!/bin/bash
 
-METAL=0
-HEAT=0
-DOWN=0
+METAL=1
+HEAT=1
+DOWN=1
 CHECK=1
-CONF=1
+CONF=0
 
-STACK=overcloud
+STACK=oc0
 DIR=config-download
-NODE_COUNT=3
+NODE_COUNT=8
 
 source ~/stackrc
 # -------------------------------------------------------
 if [[ $METAL -eq 1 ]]; then
     # 4 minutes
     openstack overcloud node provision \
-              --stack overcloud \
-              --output overcloud-baremetal-deployed.yaml \
-              ../metalsmith/standard-small.yaml
+              --stack $STACK \
+              --output deployed-metal-big.yaml \
+              metal-big.yaml
 fi
 # -------------------------------------------------------
 # `openstack overcloud -v` should be passed along as
@@ -40,7 +40,7 @@ if [[ $HEAT -eq 1 ]]; then
          --templates ~/templates/ \
          -n ../network-data.yaml \
          -e ~/templates/environments/deployed-server-environment.yaml \
-         -e overcloud-baremetal-deployed.yaml \
+         -e deployed-metal-big.yaml \
          -e ~/templates/environments/net-multiple-nics.yaml \
          -e ~/templates/environments/network-isolation.yaml \
          -e ~/templates/environments/network-environment.yaml \
