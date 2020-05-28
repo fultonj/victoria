@@ -137,7 +137,7 @@ has or will have an example toplogy file.
 
 - [substandard](../substandard): 3 controllers, 2 computes (or 1 of each)
 - [standard](../standard): 3 controllers, 2 computes, 3 ceph-storage (or 1 of each) with ceph-ansible 
-- [tripleo-cephadm](../tripleo-cephadm): 3 controllers, 2 computes, 3 ceph-storage (or 1 of each) with [tripleo-cephadm](https://review.opendev.org/#/c/723108)
+- [tripleo-ceph](../tripleo-ceph): 1 controller, 1 compute with [tripleo-ceph](https://review.opendev.org/#/c/723108)
 - [dcn](../dcn): DCN deployment with three toplogy files for three different stacks
 
 For example, my [substandard deploy script](../substandard/deploy.sh)

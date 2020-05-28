@@ -14,4 +14,4 @@ pushd victoria/init
 ./git-init.sh tht
 popd
 ```
-- Deploy using [standard](standard), [substandard](substandard) or [tripleo-cephadm](tripleo-cephadm).
+- Deploy using [standard](standard), [substandard](substandard) or [tripleo-ceph](tripleo-ceph).

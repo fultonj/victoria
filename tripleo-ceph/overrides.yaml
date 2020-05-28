@@ -1,0 +1,9 @@
+---
+parameter_defaults:
+  ContainerHealthcheckDisabled: true
+  EnablePaunch: False
+  ConfigDebug: True
+  NtpServer: pool.ntp.org
+  CephClusterFSID: '4b5c8c0a-ff60-454b-a1b4-9747aa737d19'
+  CephClientKey: 'AQDLOh1VgEp6FRAAFzT7Zw+Y9V6JJExQAsRnRQ=='
+  CephExternalMonHost: '172.16.1.7, 172.16.1.8'

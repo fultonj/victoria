@@ -1,0 +1,11 @@
+---
+- name: Controller
+  count: 1
+  instances:
+    - hostname: controller-0
+      name: oc0-controller-0
+- name: Compute
+  count: 1
+  instances:
+    - hostname: compute-0
+      name: oc0-compute-0
