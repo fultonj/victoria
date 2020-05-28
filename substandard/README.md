@@ -14,8 +14,6 @@ Ceph for now.
 
 It uses [metal.yaml](metal.yaml) which is a minimal topology with two
 nodes or [metal-big.yaml](metal-big.yaml) which deploys five nodes.
-Both of these files could also be in [metalsmith](../metalsmith). 
-
 This example includes [deployed-metal.yaml](deployed-metal.yaml) and
 [deployed-metal-big.yaml](deployed-metal-big.yaml) which is genereated
 by the  METAL section of [deploy.sh](deploy.sh) and provided only for 
