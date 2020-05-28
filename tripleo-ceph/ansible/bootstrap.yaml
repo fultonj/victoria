@@ -1,0 +1,62 @@
+---
+- hosts: mons
+  vars:
+    ceph_adm_repo: "https://github.com/ceph/ceph/raw/octopus/src/cephadm"
+    mon_bin: "/usr/sbin"
+    ceph_public_network: "172.16.11.0/24"
+    ceph_config_home: "/etc/ceph"
+    ceph_dot_conf: "{{ ceph_config_home}}/ceph.conf"
+    ceph_keyring: "{{ ceph_config_home }}/ceph.client.admin.keyring"
+  tasks:
+    - name: Get Controller(s) ip addresses on storage the storage network
+      debug:
+        msg: "{{ hostvars[groups.get('mons', {})[0]]['ansible_all_ipv4_addresses'] | ipaddr('172.16.11.0/24') | first }}"
+
+    - name: Set Mon ip addr
+      set_fact:
+        mon_ip: "{{ hostvars[groups.get('mons', {})[0]]['ansible_all_ipv4_addresses'] | ipaddr('172.16.11.0/24') | first }}"
+      run_once: true
+      delegate_to: "{{ groups.get('mons', {})[0] }}"
+
+    - name: install cephadm
+      package:
+        name: https://download.ceph.com/rpm-octopus/el8/x86_64/cephadm-15.2.2-0.el8.x86_64.rpm
+      register: result
+      until: result is succeeded
+      become: true
+
+    - name: Ensure /etc/ceph exists
+      file:
+        path: "/etc/ceph"
+        state: "directory"
+
+    - name: Set cephadm cmd fact
+      set_fact:
+        cephadm_cmd: "{{ mon_bin }}/cephadm"
+
+    - name: Bootstrap the first minimal ceph cluster
+      shell: "{{ cephadm_cmd }} bootstrap --mon-ip {{ mon_ip }}"
+      register: ceph_is_up
+      become: true
+      ignore_errors: true
+
+    ## POST BOOTSTRAP TASKS
+    - name: Get ceph fsid
+      command: "awk '/fsid/ {print $3}' /etc/ceph/ceph.conf"
+      register: fsid
+      run_once: true
+      changed_when: false
+      delegate_to: "{{ groups.get('mons', {})[0] }}"
+
+    - name: Print fsid
+      debug:
+        msg: "{{ fsid.stdout }}"
+
+    - name: Set client fact
+      set_fact:
+        ceph_cli: "{{ mon_bin }}/cephadm shell --fsid {{ fsid.stdout }} -c {{ ceph_dot_conf }} -k {{ ceph_keyring }} -- ceph"
+
+    - name: Set ceph monitors public network (we are going to use this network to deploy additional monitors)
+      command: "{{ ceph_cli }} config set mon public_network {{ ceph_public_network }}"
+      register: result
+      become: true

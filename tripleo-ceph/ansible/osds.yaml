@@ -1,0 +1,43 @@
+---
+- hosts: osds
+  vars:
+    ceph_adm_repo: "https://github.com/ceph/ceph/raw/octopus/src/cephadm"
+    mon_home: "/home/heat-admin"
+    ceph_public_network: "172.16.11.0/24"
+    ceph_config_home: "/etc/ceph"
+    ceph_dot_conf: "{{ ceph_config_home}}/ceph.conf"
+    ceph_keyring: "{{ ceph_config_home }}/ceph.client.admin.keyring"
+    all_available_devices: false
+  tasks:
+    - name: Set cephadm cmd fact
+      set_fact:
+        cephadm_cmd: "{{ mon_home }}/cephadm"
+      changed_when: false
+      delegate_to: "{{ groups.get('mons', {})[0] }}"
+
+    - name: Get ceph fsid
+      command: "awk '/fsid/ {print $3}' /etc/ceph/ceph.conf"
+      register: fsid
+      run_once: true
+      changed_when: false
+      delegate_to: "{{ groups.get('mons', {})[0] }}"
+
+    - name: Set client fact
+      set_fact:
+        ceph_cli: "{{ mon_home}}/cephadm shell --fsid {{ fsid.stdout }} -c {{ ceph_dot_conf }} -k {{ ceph_keyring }} -- ceph"
+      run_once: true
+      delegate_to: "{{ groups.get('mons', {})[0] }}"
+
+    - name: Add all the Ceph OSDs provisioned in the overcloud
+      command: "{{ ceph_cli }} orch host add {{ ansible_hostname }} {{ ansible_hostname}}.ctlplane osd"
+      #run_once: true
+      delegate_to: "{{ groups.get('mons', {})[0] }}"
+      become: true
+
+    - name: Deploy all the available osds
+      command: "{{ ceph_cli }} orch apply osd --all-available-devices"
+      run_once: true
+      delegate_to: "{{ groups.get('mons', {})[0] }}"
+      become: true
+      when: 
+        - all_available_devices | bool 
