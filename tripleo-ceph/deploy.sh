@@ -1,9 +1,9 @@
 #!/bin/bash
 
-METAL=0
-HEAT=0
-DOWN=0
-NET=0
+METAL=1
+HEAT=1
+DOWN=1
+NET=1
 CEPH=1
 CONF=0
 
@@ -118,23 +118,18 @@ if [[ $NET -eq 1 ]]; then
 fi
 # -------------------------------------------------------
 if [[ $CEPH -eq 1 ]]; then
-    # update this to use roles from https://github.com/fmount/tripleo-ceph
-    pushd $DIR
-    echo "Show storage network"
-    ansible -m shell -b -a "ip -o -4 a | grep -E 'vlan1(1|2)'" -i tripleo-ansible-inventory.yaml Controller,Compute
-    echo "Create $DIR/cephadm with an inventory and playbooks"
-    if [[ ! -d cephadm ]]; then mkdir cephadm; fi
-    cp tripleo-ansible-inventory.yaml cephadm/inventory.yaml
-    sed -i cephadm/inventory.yaml -e s/Controller/mons/g -e s/Compute/osds/g
-    cp ../ansible/*.yaml cephadm/
-    pushd cephadm
-    ansible -i inventory.yaml -m ping mons,osds
-    # echo "bootstrap ceph"
-    ansible-playbook -vv -i inventory.yaml bootstrap.yaml
-    # echo "copy ceph key"
-    ansible-playbook -vv -i inventory.yaml copy_cephadm_pub.key.yaml
-    # echo "add osd (broken)"
-    # ansible-playbook -vv -i inventory.yaml osds.yaml
+    ANS=/home/stack/tripleo-ceph/
+    INV=$ANS/inventory.yaml
+    if [[ ! -d $ANS ]]; then
+        echo "Fail: clone https://github.com/fmount/tripleo-ceph/ to $ANS"
+        exit 1
+    fi
+    cp $DIR/tripleo-ansible-inventory.yaml $INV
+    sed -i $INV -e s/Controller/mons/g -e s/Compute/osds/g
+    ansible -m shell -b -a "ip -o -4 a | grep -E 'vlan1(1|2)'" -i $INV mons,osds
+    pushd $ANS
+    ansible-playbook -i $INV site.yaml -v \
+                     --skip-tags ceph_spec,ceph_spec_apply
     popd
 fi
 # -------------------------------------------------------
