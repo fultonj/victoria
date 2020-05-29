@@ -1,6 +1,8 @@
 # TripleO Ceph Prototype
 
-POC for [tripleo-ceph spec](https://review.opendev.org/#/c/723108).
+POC for [tripleo-ceph spec](https://review.opendev.org/#/c/723108)
+which uses POC [tripleo-ceph](https://github.com/fmount/tripleo-ceph) 
+Ansible roles.
 
 ## What you get
 
@@ -20,15 +22,15 @@ Set flags to 0 or 1 in [deploy.sh](deploy.sh) to enable the following:
 - HEAT create a heat stack with --stack-only
 - DOWN download the configuration as ansible playbooks
 - NET use config-download ansible to configure the networks
-- CEPH use cephadm and ceph-orchestrator to configure ceph
+- CEPH deploy ceph with [tripleo-ceph](https://github.com/fmount/tripleo-ceph)
 - CONF use config-download ansible to configure the rest of the openstack
-
-## Status
-
-- We can bootstap a ceph-mon and ceph-mgr on a controller node with cephadm
 
 ## Notes
 
 - https://download.ceph.com/rpm-octopus/el8/x86_64/
 - https://github.com/ceph/ceph/pull/35195
 - https://github.com/ceph/ceph/pull/34879
+
+## Status
+
+- We can bootstap a ceph-mon and ceph-mgr on a controller node with cephadm

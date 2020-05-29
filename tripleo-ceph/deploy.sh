@@ -1,9 +1,9 @@
 #!/bin/bash
 
-METAL=1
-HEAT=1
-DOWN=1
-NET=1
+METAL=0
+HEAT=0
+DOWN=0
+NET=0
 CEPH=1
 CONF=0
 
@@ -118,6 +118,7 @@ if [[ $NET -eq 1 ]]; then
 fi
 # -------------------------------------------------------
 if [[ $CEPH -eq 1 ]]; then
+    # update this to use roles from https://github.com/fmount/tripleo-ceph
     pushd $DIR
     echo "Show storage network"
     ansible -m shell -b -a "ip -o -4 a | grep -E 'vlan1(1|2)'" -i tripleo-ansible-inventory.yaml Controller,Compute
@@ -128,11 +129,11 @@ if [[ $CEPH -eq 1 ]]; then
     cp ../ansible/*.yaml cephadm/
     pushd cephadm
     ansible -i inventory.yaml -m ping mons,osds
-    echo "bootstrap ceph"
+    # echo "bootstrap ceph"
     ansible-playbook -vv -i inventory.yaml bootstrap.yaml
-    echo "copy ceph key"
+    # echo "copy ceph key"
     ansible-playbook -vv -i inventory.yaml copy_cephadm_pub.key.yaml
-    echo "add osd (broken)"
+    # echo "add osd (broken)"
     # ansible-playbook -vv -i inventory.yaml osds.yaml
     popd
 fi
