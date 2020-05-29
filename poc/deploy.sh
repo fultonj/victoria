@@ -9,7 +9,7 @@ CONF=0
 
 STACK=oc0
 DIR=config-download
-NODE_COUNT=2
+NODE_COUNT=6
 
 source ~/stackrc
 # -------------------------------------------------------

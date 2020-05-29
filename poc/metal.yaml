@@ -1,11 +1,19 @@
 ---
 - name: Controller
-  count: 1
+  count: 3
   instances:
     - hostname: controller-0
       name: oc0-controller-0
+    - hostname: controller-1
+      name: oc0-controller-1
+    - hostname: controller-2
+      name: oc0-controller-2
 - name: Compute
-  count: 1
+  count: 3
   instances:
     - hostname: compute-0
       name: oc0-ceph-0
+    - hostname: compute-1
+      name: oc0-ceph-1
+    - hostname: compute-2
+      name: oc0-ceph-2
