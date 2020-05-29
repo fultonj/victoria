@@ -1,7 +1,7 @@
-# TripleO Ceph Prototype
+# TripleO Ceph Proof of Concept
 
 POC for [tripleo-ceph spec](https://review.opendev.org/#/c/723108)
-which uses POC [tripleo-ceph](https://github.com/fmount/tripleo-ceph) 
+which uses [tripleo-ceph](https://github.com/fmount/tripleo-ceph)
 Ansible roles.
 
 ## What you get
@@ -25,12 +25,7 @@ Set flags to 0 or 1 in [deploy.sh](deploy.sh) to enable the following:
 - CEPH deploy ceph with [tripleo-ceph](https://github.com/fmount/tripleo-ceph)
 - CONF use config-download ansible to configure the rest of the openstack
 
-## Notes
+## todo
 
-- https://download.ceph.com/rpm-octopus/el8/x86_64/
-- https://github.com/ceph/ceph/pull/35195
-- https://github.com/ceph/ceph/pull/34879
-
-## Status
-
-- We can bootstap a ceph-mon and ceph-mgr on a controller node with cephadm
+- Until we have https://github.com/ceph/ceph/pull/34879 write quick
+  ceph orch role
