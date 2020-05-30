@@ -5,7 +5,7 @@ HEAT=1
 DOWN=1
 NET=1
 CEPH=1
-CONF=0
+CONF=1
 
 STACK=oc0
 DIR=config-download
@@ -31,6 +31,15 @@ if [[ $HEAT -eq 1 ]]; then
         echo "Expecting $NODE_COUNT nodes but $FOUND_COUNT nodes have been deployed"
         exit 1
     fi
+    if [[ ! -e roles.yaml ]]; then
+        # HACK to get storage network into Compute node
+        # Use ComputeHCI role so I get StorageMgmt
+        openstack overcloud roles generate Controller ComputeHCI -o roles.yaml
+        # Rename the ComputeHCI role to Compute
+        sed -i 's/ComputeHCI/Compute/g' roles.yaml
+        # Remove all Ceph services (unnecessary as not enabled, but paranoia)
+        sed -i '/::Ceph/d' roles.yaml
+    fi
     time openstack overcloud -v deploy \
          --stack $STACK \
          --templates ~/templates/ \
@@ -44,7 +53,6 @@ if [[ $HEAT -eq 1 ]]; then
          -e ~/templates/environments/low-memory-usage.yaml \
          -e ~/templates/environments/enable-swap.yaml \
          -e ~/templates/environments/podman.yaml \
-         -e ~/templates/environments/ceph-ansible/ceph-ansible-external.yaml \
          -e ~/generated-container-prepare.yaml \
          -e ~/domain.yaml \
          -e overrides.yaml \
@@ -126,19 +134,20 @@ if [[ $CEPH -eq 1 ]]; then
     fi
     cp $DIR/tripleo-ansible-inventory.yaml $INV
     sed -i $INV -e s/Controller/mons/g -e s/Compute/osds/g
-    ansible -m shell -b -a "ip -o -4 a | grep -E 'vlan1(1|2)'" -i $INV mons,osds
     pushd $ANS
-    ansible-playbook -i $INV site.yaml -v \
-                     --skip-tags ceph_spec,ceph_spec_apply
+    ansible-playbook-3 -i $INV site.yaml -v
     popd
 fi
 # -------------------------------------------------------
 if [[ $CONF -eq 1 ]]; then
+    # configure the rest of openstack
     pushd $DIR
     time ansible-playbook-3 \
 	 -v -b -i tripleo-ansible-inventory.yaml \
          --private-key ~/.ssh/id_rsa_tripleo \
-         --tags step2,step3,step4,step5,opendev-validation \
+         --tags step2,step3,step4,step5 \
+         --skip-tags run_ceph_ansible,opendev-validation \
 	 deploy_steps_playbook.yaml
-   popd
+    popd
+    # extra paranoia ceph-ansible will not run
 fi
