@@ -3,7 +3,7 @@
 # -------------------------------------------------------
 if [[ $1 == 'poc' ]]; then
     pushd ~
-    git clone git@github.com:fmount/tripleo-ceph.git
+    git clone git@github.com:fmount/tripleo-ceph.git -b ignore
     popd
 fi
 # -------------------------------------------------------
