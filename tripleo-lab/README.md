@@ -26,4 +26,6 @@ which is running centos8.
  ansible-playbook -i inventory.yaml builder.yaml -e @environments/overrides.yml -e @environments/topology-standard.yml
 ```
 
-If the last command is run with the `-t domains -t baremetal -t vbmc` tags, then all of the virtual baremetal servers being provisioned. See [metalsmith](../metalsmith/).
+The tasks referenced by the tags `-t domains -t baremetal -t vbmc`
+(which are inclusive in the above example) will provision the virtual
+baremetal servers. See [metalsmith](../metalsmith/).
