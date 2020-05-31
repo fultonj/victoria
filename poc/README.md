@@ -12,7 +12,6 @@ Ansible roles.
 You get the functional equivalent of if you had deployed using 
 ceph-ansible and the ComputeHCI role. However, the collocated
 Ceph deployment is implemented using cephadm and ceph-orchestrator.
-Ceph client configuration uses ceph-ansible-external.yaml.
 
 ## Deployment Process
 
