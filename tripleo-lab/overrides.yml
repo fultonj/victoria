@@ -15,10 +15,6 @@ python_version: 3
 
 # tripleo_undercloud_install_home_dir: /home/stack
 
-# from metalsmith.yaml
-tripleo_overcloud_node_provision_concurrency: 2
-metalsmith: true
-
 # from vm-centos8.yaml but with changes
 growfs_part: '/'
 tripleoclient_pkgname: python3-tripleoclient

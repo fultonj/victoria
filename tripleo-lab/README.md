@@ -4,6 +4,8 @@ I run the following on
 [my hypervisor](http://blog.johnlikesopenstack.com/2018/08/pc-for-tripleo-quickstart.html)
 which is running centos8.
 
+## Prepare tripleo-lab
+
 ```
  sudo /usr/local/bin/lab-destroy
 
@@ -22,10 +24,21 @@ which is running centos8.
  ansible -i inventory.yaml -m ping builder
 
  ansible-playbook -i inventory.yaml config-host.yaml
+```
 
+## Deploy undercloud configured with Nova to Trigger Ironic
+
+```
  ansible-playbook -i inventory.yaml builder.yaml -e @environments/overrides.yml -e @environments/topology-standard.yml
+```
+
+## Deploy undercloud configured with Metalsmith
+
+```
+ ansible-playbook -i inventory.yaml builder.yaml -e @environments/overrides.yml -e @environments/environments/metalsmith.yaml -e @environments/topology-standard.yml
 ```
 
 The tasks referenced by the tags `-t domains -t baremetal -t vbmc`
 (which are inclusive in the above example) will provision the virtual
 baremetal servers. See [metalsmith](../metalsmith/).
+
