@@ -1,6 +1,6 @@
 #!/bin/bash
 
-METAL=1
+METAL=0
 HEAT=1
 DOWN=1
 NET=1
@@ -9,7 +9,7 @@ CONF=1
 
 STACK=oc0
 DIR=config-download
-NODE_COUNT=6
+NODE_COUNT=0
 
 source ~/stackrc
 # -------------------------------------------------------
@@ -19,6 +19,8 @@ if [[ $METAL -eq 1 ]]; then
               --stack $STACK \
               --output deployed-metal.yaml \
               metal.yaml
+else
+    echo "Assuming servers are provsioned or you ran no-metalsmith.sh"
 fi
 # -------------------------------------------------------
 if [[ $HEAT -eq 1 ]]; then
@@ -26,10 +28,12 @@ if [[ $HEAT -eq 1 ]]; then
     if [[ ! -d ~/templates ]]; then
         ln -s /usr/share/openstack-tripleo-heat-templates templates
     fi
-    FOUND_COUNT=$(metalsmith -f value -c "Hostname" list | wc -l)
-    if [[ $NODE_COUNT != $FOUND_COUNT ]]; then
-        echo "Expecting $NODE_COUNT nodes but $FOUND_COUNT nodes have been deployed"
-        exit 1
+    if [[ $NODE_COUNT -gt 0 ]]; then
+        FOUND_COUNT=$(metalsmith -f value -c "Hostname" list | wc -l)
+        if [[ $NODE_COUNT != $FOUND_COUNT ]]; then
+            echo "Expecting $NODE_COUNT nodes but $FOUND_COUNT nodes have been deployed"
+            exit 1
+        fi
     fi
     if [[ ! -e roles.yaml ]]; then
         # HACK to get storage network into Compute node
@@ -40,12 +44,16 @@ if [[ $HEAT -eq 1 ]]; then
         # Remove all Ceph services (unnecessary as not enabled, but paranoia)
         sed -i '/::Ceph/d' roles.yaml
     fi
+    # if metalsmith
+    #     -e ~/templates/environments/deployed-server-environment.yaml \
+    #     -e deployed-metal.yaml \
+    # else
+    #     -e no-metalsmith.yaml
     time openstack overcloud -v deploy \
          --stack $STACK \
          --templates ~/templates/ \
+         -r roles.yaml \
          -n ../network-data.yaml \
-         -e ~/templates/environments/deployed-server-environment.yaml \
-         -e deployed-metal.yaml \
          -e ~/templates/environments/net-multiple-nics.yaml \
          -e ~/templates/environments/network-isolation.yaml \
          -e ~/templates/environments/network-environment.yaml \
@@ -55,6 +63,7 @@ if [[ $HEAT -eq 1 ]]; then
          -e ~/templates/environments/podman.yaml \
          -e ~/generated-container-prepare.yaml \
          -e ~/domain.yaml \
+         -e no-metalsmith.yaml \
          -e overrides.yaml \
          --libvirt-type qemu \
          --stack-only
