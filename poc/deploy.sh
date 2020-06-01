@@ -26,7 +26,7 @@ fi
 if [[ $HEAT -eq 1 ]]; then
     # 7 minutes
     if [[ ! -d ~/templates ]]; then
-        ln -s /usr/share/openstack-tripleo-heat-templates templates
+        ln -s /usr/share/openstack-tripleo-heat-templates ~/templates
     fi
     if [[ $NODE_COUNT -gt 0 ]]; then
         FOUND_COUNT=$(metalsmith -f value -c "Hostname" list | wc -l)
