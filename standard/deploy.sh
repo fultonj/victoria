@@ -1,14 +1,14 @@
 #!/bin/bash
 
-METAL=1
+METAL=0
 HEAT=1
 DOWN=1
 CHECK=1
-CONF=0
+CONF=1
 
 STACK=oc0
 DIR=config-download
-NODE_COUNT=8
+NODE_COUNT=0
 
 source ~/stackrc
 # -------------------------------------------------------
@@ -18,6 +18,8 @@ if [[ $METAL -eq 1 ]]; then
               --stack $STACK \
               --output deployed-metal-big.yaml \
               metal-big.yaml
+else
+    echo "Assuming servers are provsioned or you ran no-metalsmith.sh"
 fi
 # -------------------------------------------------------
 # `openstack overcloud -v` should be passed along as
@@ -30,17 +32,22 @@ if [[ $HEAT -eq 1 ]]; then
     if [[ ! -d ~/templates ]]; then
         ln -s /usr/share/openstack-tripleo-heat-templates ~/templates
     fi
-    FOUND_COUNT=$(metalsmith -f value -c "Hostname" list | wc -l)
-    if [[ $NODE_COUNT != $FOUND_COUNT ]]; then
-        echo "Expecting $NODE_COUNT nodes but $FOUND_COUNT nodes have been deployed"
-        exit 1
+    if [[ $NODE_COUNT -gt 0 ]]; then
+        FOUND_COUNT=$(metalsmith -f value -c "Hostname" list | wc -l)
+        if [[ $NODE_COUNT != $FOUND_COUNT ]]; then
+            echo "Expecting $NODE_COUNT nodes but $FOUND_COUNT nodes have been deployed"
+            exit 1
+        fi
     fi
+    # if metalsmith
+    #     -e ~/templates/environments/deployed-server-environment.yaml \
+    #     -e deployed-metal-big.yaml \
+    # else
+    #     -e no-metalsmith.yaml
     time openstack overcloud -v deploy \
          --stack $STACK \
          --templates ~/templates/ \
          -n ../network-data.yaml \
-         -e ~/templates/environments/deployed-server-environment.yaml \
-         -e deployed-metal-big.yaml \
          -e ~/templates/environments/net-multiple-nics.yaml \
          -e ~/templates/environments/network-isolation.yaml \
          -e ~/templates/environments/network-environment.yaml \
@@ -51,7 +58,8 @@ if [[ $HEAT -eq 1 ]]; then
          -e ~/templates/environments/ceph-ansible/ceph-ansible.yaml \
          -e ~/generated-container-prepare.yaml \
          -e ~/domain.yaml \
-         -e ~/victoria/standard/overrides.yaml \
+         -e no-metalsmith.yaml \
+         -e overrides.yaml \
          --stack-only \
          --libvirt-type qemu
 

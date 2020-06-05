@@ -1,0 +1,14 @@
+---
+parameter_defaults:
+  ControllerCount: 3
+  ComputeCount: 2
+  CephStorageCount: 3
+  ControllerSchedulerHints:
+    'capabilities:node': '0-controller-%index%'
+  ComputeSchedulerHints:
+    'capabilities:node': '0-compute-%index%'
+  CephStorageSchedulerHints:
+    'capabilities:node': '0-ceph-%index%'
+  OvercloudControlFlavor: baremetal
+  OvercloudComputeFlavor: baremetal
+  OvercloudCephStorageFlavor: baremetal
