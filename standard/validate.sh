@@ -2,9 +2,9 @@
 
 OVERALL=1
 MDS=0
-CINDER=0
-GLANCE=0
-NOVA=0
+CINDER=1
+GLANCE=1
+NOVA=1
 
 DIR=config-download
 STACK=oc0
