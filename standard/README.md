@@ -25,13 +25,11 @@ Set flags in [deploy.sh](deploy.sh) to:
 - download the configuration as ansible playbooks
 - use ansible to configure the overcloud
 
-<!-- Use [validate.sh](validate.sh) to transfer files to the controller -->
-<!-- node and run a validation (this is only necessary since the undercloud -->
-<!-- cannot reach the "external" network where the overcloud services -->
-<!-- listen). The validation then: -->
+Use [validate.sh](validate.sh) to run the following tests on the
+deployed overcloud:
 
-<!-- - Reports on Ceph status -->
-<!-- - Creates a Cinder volume (and shows it in ceph volumes pool) -->
-<!-- - Creates a Glance image (and shows it in ceph images pool) -->
-<!-- - Creates a private Neutron network -->
-<!-- - Creates a Nova instance -->
+- Report on Ceph status
+- Create a Cinder volume (and show it in ceph volumes pool)
+- Create a Glance image (and show it in ceph images pool)
+- Create a private Neutron network
+- Create a Nova instance
