@@ -17,6 +17,6 @@ parameter_defaults:
   CinderVolumeCluster: dcn0
   NovaAZAttach: false
   ManageNetworks: false
-  CephAnsibleRepo: storage8-ceph-nautilus
+  CephAnsibleRepo: tripleo-centos-ceph-nautilus
   EnablePaunch: False
   ConfigDebug: True

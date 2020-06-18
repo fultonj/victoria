@@ -1,6 +1,6 @@
 #!/bin/bash
 
-HEAT=1 
+HEAT=1
 DOWN=1
 CONF=1
 
@@ -11,7 +11,7 @@ source ~/stackrc
 # -------------------------------------------------------
 export ANSIBLE_CONFIG=/home/stack/ansible.cfg
 if [[ ! -e $ANSIBLE_CONFIG ]]; then
-    bash /home/stack/victoria/ansible_cfg.sh
+   openstack tripleo config generate ansible
     if [[ ! -e $ANSIBLE_CONFIG ]]; then
         echo "Unable to create $ANSIBLE_CONFIG"
         exit 1;
@@ -45,17 +45,17 @@ if [[ $HEAT -eq 1 ]]; then
          -e ~/templates/environments/enable-swap.yaml \
          -e ~/templates/environments/podman.yaml \
          -e ~/templates/environments/ceph-ansible/ceph-ansible.yaml \
-         -e ~/containers-env-file.yaml \
+         -e ~/generated-container-prepare.yaml \
          -e ~/domain.yaml \
-         -e ~/victoria/glance/control-plane/ceph.yaml \
-         -e ~/victoria/glance/control-plane/ceph_keys.yaml \
-         -e ~/victoria/glance/control-plane/overrides.yaml \
+         -e ~/victoria/dcn/control-plane/ceph.yaml \
+         -e ~/victoria/dcn/control-plane/ceph_keys.yaml \
+         -e ~/victoria/dcn/control-plane/overrides.yaml \
          --stack-only \
-         --libvirt-type qemu 2>&1 | tee -a ~/install-overcloud.log
+         --libvirt-type qemu
 
-    # For stack updates when central glance will use dcn{0,1} ceph clusters
-    # -e ~/victoria/glance/control-plane/ceph_keys_update.yaml \
-    # -e ~/victoria/glance/control-plane/glance_update.yaml \
+    # For stack updates when central dcn will use dcn{0,1} ceph clusters
+    # -e ~/victoria/dcn/control-plane/ceph_keys_update.yaml \
+    # -e ~/victoria/dcn/control-plane/dcn_update.yaml \
     
     # remove --stack-only to make DOWN and CONF unnecessary
 fi
