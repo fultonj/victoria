@@ -1,0 +1,18 @@
+---
+parameter_defaults:
+  ControllerExtraConfig:
+    glance::api::enabled_import_methods: 'glance-direct,web-download,copy-image'
+  GlanceBackend: rbd
+  GlanceStoreDescription: 'central rbd glance store'
+  CephClusterName: central
+  GlanceMultistoreConfig:
+    dcn0:
+      GlanceBackend: rbd
+      GlanceStoreDescription: 'dcn0 rbd glance store'
+      CephClientUserName: 'external'
+      CephClusterName: dcn0
+    dcn1:
+      GlanceBackend: rbd
+      GlanceStoreDescription: 'dcn1 rbd glance store'
+      CephClientUserName: 'external'
+      CephClusterName: dcn1
