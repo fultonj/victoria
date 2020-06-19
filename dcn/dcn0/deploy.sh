@@ -12,7 +12,7 @@ source ~/stackrc
 # -------------------------------------------------------
 export ANSIBLE_CONFIG=/home/stack/ansible.cfg
 if [[ ! -e $ANSIBLE_CONFIG ]]; then
-    bash /home/stack/victoria/ansible_cfg.sh
+    openstack tripleo config generate ansible
     if [[ ! -e $ANSIBLE_CONFIG ]]; then
         echo "Unable to create $ANSIBLE_CONFIG"
         exit 1;
@@ -47,13 +47,13 @@ if [[ $HEAT -eq 1 ]]; then
          -e ~/templates/environments/podman.yaml \
          -e ~/templates/environments/ceph-ansible/ceph-ansible.yaml \
          -e ~/templates/environments/dcn-hci.yaml \
-         -e ~/containers-env-file.yaml \
+         -e ~/generated-container-prepare.yaml \
          -e ~/control-plane-export.yaml \
          -e ~/dcn_ceph_keys.yaml \
-         -e ~/victoria/glance/dcn0/ceph.yaml \
-         -e ~/victoria/glance/dcn0/nova-az.yaml \
-         -e ~/victoria/glance/dcn0/glance.yaml \
-         -e ~/victoria/glance/dcn0/overrides.yaml \
+         -e ~/victoria/dcn/dcn0/ceph.yaml \
+         -e ~/victoria/dcn/dcn0/nova-az.yaml \
+         -e ~/victoria/dcn/dcn0/glance.yaml \
+         -e ~/victoria/dcn/dcn0/overrides.yaml \
          --stack-only \
          --libvirt-type qemu 2>&1 | tee -a ~/install-overcloud.log
 
