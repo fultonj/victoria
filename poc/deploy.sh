@@ -8,7 +8,7 @@ CEPH=1
 CONF=1
 
 STACK=oc0
-DIR=config-download
+DIR=$PWD/config-download
 NODE_COUNT=0
 
 source ~/stackrc

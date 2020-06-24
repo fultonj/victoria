@@ -5,7 +5,7 @@ DOWN=1
 CONF=1
 
 STACK=dcn0
-DIR=config-download
+DIR=$PWD/config-download
 
 source ~/stackrc
 

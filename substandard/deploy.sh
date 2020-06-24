@@ -6,7 +6,7 @@ DOWN=1
 CONF=1
 
 STACK=oc0
-DIR=config-download
+DIR=$PWD/config-download
 NODE_COUNT=5
 
 source ~/stackrc
