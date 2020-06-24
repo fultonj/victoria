@@ -85,7 +85,7 @@ if [[ $DOWN -eq 1 ]]; then
     if [[ ! -d $DIR ]]; then
 	echo "tripleo-config-download cmd didn't create $DIR"
     else
-	pushd $DIR
+	pushd $DIR/$STACK
         if [[ ! -e ansible.cfg ]]; then
             # Assume I don't yet have https://review.opendev.org/#/c/725602
             echo "Genereating ansible.cfg in $PWD"
@@ -113,7 +113,7 @@ if [[ $DOWN -eq 1 ]]; then
         echo "Test ansible ping"
 	ansible -i tripleo-ansible-inventory.yaml all -m ping
 	popd        
-	echo "pushd $DIR"
+	echo "pushd $DIR/$STACK"
 	echo 'ansible -i inventory.yaml all -m shell -b -a "hostname"'
     fi
 fi
@@ -125,7 +125,7 @@ fi
 # -------------------------------------------------------
 if [[ $NET -eq 1 ]]; then
     # 13 minutes
-    pushd $DIR
+    pushd $DIR/$STACK
     time ansible-playbook-3 \
 	 -v -b -i tripleo-ansible-inventory.yaml \
          --private-key ~/.ssh/id_rsa_tripleo \

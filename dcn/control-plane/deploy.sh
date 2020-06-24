@@ -1,6 +1,6 @@
 #!/bin/bash
 
-HEAT=1
+HEAT=0
 DOWN=1
 CONF=1
 
@@ -79,7 +79,7 @@ if [[ $DOWN -eq 1 ]]; then
     if [[ ! -d $DIR ]]; then
 	echo "tripleo-config-download cmd didn't create $DIR"
     else
-	pushd $DIR
+	pushd $DIR/$STACK
         echo "Create inventory"
 	tripleo-ansible-inventory --static-yaml-inventory inventory.yaml --stack $STACK
 	if [[ ! -e inventory.yaml ]]; then
@@ -95,7 +95,7 @@ if [[ $DOWN -eq 1 ]]; then
 	ansible -i inventory.yaml all -m ping
 	popd
         echo "export ANSIBLE_CONFIG=/home/stack/ansible.cfg"
-	echo "pushd $DIR"
+	echo "pushd $DIR/$STACK"
 	echo 'ansible -i inventory.yaml all -m shell -b -a "hostname"'
     fi
 fi
@@ -109,8 +109,8 @@ if [[ $CONF -eq 1 ]]; then
     time ansible-playbook-3 \
 	 -v \
 	 --become \
-	 -i $DIR/inventory.yaml \
-	 $DIR/deploy_steps_playbook.yaml
+	 -i $DIR/$STACK/inventory.yaml \
+	 $DIR/$STACK/deploy_steps_playbook.yaml
 
     # Do not use these yet for updates to central; need to identify glance tags
     # For stack updates when central will use dcn{0,1} ceph clusters:
