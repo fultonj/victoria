@@ -1,26 +1,18 @@
 #!/usr/bin/env bash
 # Assumes you have run ironic.sh
-KILL=0
 CONTROL=1
-EXPORT=0
-DCN0=0
+EXPORT=1
+DCN0=1
 DCN1=0
 CONTROLUP=0
-# -------------------------------------------------------
+
 source ~/stackrc
-if [[ $KILL -eq 1 ]]; then
-    if [[ $(openstack stack list | wc -l) -gt 1 ]]; then
-        echo "Destroying the following deployments"
-        openstack stack list
-        for STACK in $(openstack stack list -f value -c "Stack Name"); do
-            openstack stack delete $STACK --wait --yes
-        done
-    fi
-fi
 # -------------------------------------------------------
 if [[ $CONTROL -eq 1 ]]; then
     echo "Generating control-plane/ceph_keys.yaml"
-    bash ceph_keys.sh 1
+    if [[ ! -e control-plane/ceph_keys.yaml ]]; then
+        bash ceph_keys.sh 1
+    fi
     if [[ ! -e control-plane/ceph_keys.yaml ]]; then
         echo "Failure: ceph_keys.sh 1"
         exit 1
