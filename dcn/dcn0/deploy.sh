@@ -30,7 +30,7 @@ fi
 # -------------------------------------------------------
 if [[ $HEAT -eq 1 ]]; then
     if [[ ! -d ~/templates ]]; then
-        ln -s /usr/share/openstack-tripleo-heat-templates templates
+        ln -s /usr/share/openstack-tripleo-heat-templates ~/templates
     fi
     time openstack overcloud -v deploy \
          --stack $STACK \
