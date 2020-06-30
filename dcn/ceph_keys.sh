@@ -124,14 +124,14 @@ for PARAM in "${PARAMS[@]}"; do
         echo "Each entry in CephExternalMultiConfig will come from ${STACKS[@]}"
         prep_multi_config
         for STACK in "${STACKS[@]}"; do
-            FILE="$(pwd)/$STACK/config-download/ceph-ansible/group_vars/all.yml"
+            FILE="/home/stack/config-download/$STACK/ceph-ansible/group_vars/all.yml"
             MYKEY=fsid
             FSID=$(get_from_yaml)
             MYKEY=cluster
             CLUSTER=$(get_from_yaml)
             MYKEY=key
             KEY=$(get_from_yaml)
-            FILE="$(pwd)/$STACK/config-download/inventory.yaml"
+            FILE="/home/stack/config-download/$STACK/tripleo-ansible-inventory.yaml"
             MYKEY=external_cluster_mon_ips
             EXTERNAL_CLUSTER_MON_IPS=$(get_from_yaml)
             make_multi_config
