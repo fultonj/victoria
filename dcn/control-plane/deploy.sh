@@ -1,8 +1,8 @@
 #!/bin/bash
 
-HEAT=0
-DOWN=1
-CONF=1
+HEAT=1
+DOWN=0
+CONF=0
 
 STACK=control-plane
 DIR=$PWD/config-download
@@ -34,6 +34,7 @@ if [[ $HEAT -eq 1 ]]; then
     time openstack overcloud -v deploy \
          --stack $STACK \
          --override-ansible-cfg $ANSIBLE_CONFIG \
+         --timeout 240 \
          --templates ~/templates/ \
          -r ~/control_plane_roles.yaml \
          -n ~/victoria/network-data.yaml \
@@ -50,7 +51,6 @@ if [[ $HEAT -eq 1 ]]; then
          -e ~/victoria/dcn/control-plane/ceph.yaml \
          -e ~/victoria/dcn/control-plane/ceph_keys.yaml \
          -e ~/victoria/dcn/control-plane/overrides.yaml \
-         --stack-only \
          --libvirt-type qemu
 
     # For stack updates when central dcn will use dcn{0,1} ceph clusters
@@ -110,6 +110,8 @@ if [[ $CONF -eq 1 ]]; then
 	 -v \
 	 --become \
 	 -i $DIR/$STACK/inventory.yaml \
+         -e gather_facts=true -e @$DIR/$STACK/global_vars.yaml \
+         --tags external_deploy_steps \
 	 $DIR/$STACK/deploy_steps_playbook.yaml
 
     # Do not use these yet for updates to central; need to identify glance tags

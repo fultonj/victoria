@@ -1,8 +1,8 @@
 #!/bin/bash
 
 HEAT=1
-DOWN=1
-CONF=1
+DOWN=0
+CONF=0
 
 STACK=dcn0
 DIR=$PWD/config-download
@@ -35,6 +35,7 @@ if [[ $HEAT -eq 1 ]]; then
     time openstack overcloud -v deploy \
          --stack $STACK \
          --override-ansible-cfg $ANSIBLE_CONFIG \
+         --timeout 240 \
          --templates ~/templates/ \
          -r ~/dcn_roles.yaml \
          -n ~/victoria/network-data.yaml \
@@ -54,10 +55,10 @@ if [[ $HEAT -eq 1 ]]; then
          -e ~/victoria/dcn/dcn0/nova-az.yaml \
          -e ~/victoria/dcn/dcn0/glance.yaml \
          -e ~/victoria/dcn/dcn0/overrides.yaml \
-         --stack-only \
          --libvirt-type qemu 2>&1 | tee -a ~/install-overcloud.log
 
     # remove --no-config-download to make DOWN and CONF unnecessary
+    # --stack-only \
 fi
 # -------------------------------------------------------
 if [[ $DOWN -eq 1 ]]; then
