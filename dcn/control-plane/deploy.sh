@@ -34,7 +34,7 @@ if [[ $HEAT -eq 1 ]]; then
     time openstack overcloud -v deploy \
          --stack $STACK \
          --override-ansible-cfg $ANSIBLE_CONFIG \
-         --timeout 240 \
+         --config-download-timeout 240 \
          --templates ~/templates/ \
          -r ~/control_plane_roles.yaml \
          -n ~/victoria/network-data.yaml \
