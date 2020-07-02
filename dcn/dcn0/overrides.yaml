@@ -1,4 +1,8 @@
 ---
+# workaround https://github.com/fultonj/victoria/issues/1 
+resource_registry:
+  OS::TripleO::Services::BlockStorageCinderVolume: /home/stack/templates/deployment/cinder/cinder-volume-container-puppet.yaml
+
 parameter_defaults:
   ContainerHealthcheckDisabled: true
   NtpServer: pool.ntp.org
