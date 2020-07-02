@@ -52,7 +52,6 @@ if [[ $HEAT -eq 1 ]]; then
          -e ~/control-plane-export.yaml \
          -e ~/dcn_ceph_keys.yaml \
          -e ~/victoria/dcn/dcn0/ceph.yaml \
-         -e ~/victoria/dcn/dcn0/nova-az.yaml \
          -e ~/victoria/dcn/dcn0/glance.yaml \
          -e ~/victoria/dcn/dcn0/overrides.yaml \
          --libvirt-type qemu 2>&1 | tee -a ~/install-overcloud.log

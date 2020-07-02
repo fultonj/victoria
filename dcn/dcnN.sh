@@ -37,8 +37,6 @@ for n in $(seq 1 $N); do
     cp dcn0/overrides.yaml $deploy/overrides.yaml
     sed s/dcn0/$deploy/g -i $deploy/overrides.yaml
     sed s/"0-dcn-hci"/"$n-dcn-hci"/g -i $deploy/overrides.yaml
-    cp dcn0/nova-az.yaml $deploy/nova-az.yaml
-    sed s/dcn0/$deploy/g -i $deploy/nova-az.yaml
     cp dcn0/glance.yaml $deploy/glance.yaml
     sed s/dcn0/$deploy/g -i $deploy/glance.yaml
     cp dcn0/deploy.sh $deploy/deploy.sh
