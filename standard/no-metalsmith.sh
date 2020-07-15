@@ -2,6 +2,8 @@
 # tag nodes in Ironic
 source ~/stackrc
 
+DCN=1
+
 declare -A MAP
 MAP[oc0-controller-0]="0-controller-0"  # Controller
 MAP[oc0-controller-1]="0-controller-1"  # Controller
@@ -9,9 +11,13 @@ MAP[oc0-controller-2]="0-controller-2"  # Controller
 MAP[oc0-ceph-0]="0-ceph-0"           # CephStorage
 MAP[oc0-ceph-1]="0-ceph-1"           # CephStorage
 MAP[oc0-ceph-2]="0-ceph-2"           # CephStorage
-MAP[oc0-compute-0]="0-compute-0"        # Compute
-MAP[oc0-compute-1]="0-compute-1"        # Compute
-
+if [[ DCN -eq 1 ]]; then
+    MAP[oc0-ceph-3]="0-compute-0"        # Compute
+    MAP[oc0-ceph-4]="0-compute-1"        # Compute
+else
+    MAP[oc0-compute-0]="0-compute-0"        # Compute
+    MAP[oc0-compute-1]="0-compute-1"        # Compute
+fi
 
 for K in "${!MAP[@]}"; do
     echo "$K ---> ${MAP[$K]}";
