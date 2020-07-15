@@ -2,9 +2,9 @@
 
 METAL=0
 HEAT=1
-DOWN=1
-CHECK=1
-CONF=1
+DOWN=0
+CHECK=0
+CONF=0
 
 STACK=oc0
 DIR=$PWD/config-download
@@ -60,10 +60,9 @@ if [[ $HEAT -eq 1 ]]; then
          -e ~/domain.yaml \
          -e no-metalsmith.yaml \
          -e overrides.yaml \
-         --stack-only \
          --libvirt-type qemu
 
-         # remove --stack-only to make DOWN and CONF unnecessary...
+         # add --stack-only to use DOWN and CONF
 fi
 # -------------------------------------------------------
 if [[ $DOWN -eq 1 ]]; then
