@@ -18,11 +18,8 @@ if [[ $1 == 'alias' ]]; then
 fi
 # -------------------------------------------------------
 if [[ $1 == 'tht' ]]; then
-    pushd ~
     declare -a repos=(
         'openstack/tripleo-heat-templates' \
-        'openstack/tripleo-common'\
-        'openstack/tripleo-validations'\
         'openstack/tripleo-ansible'\
 	);
 fi
@@ -98,34 +95,15 @@ if [[ $1 == 'tht' ]]; then
     if [[ ! -e ~/templates ]]; then
         ln -v -s ~/tripleo-heat-templates ~/templates
     fi
-    if [[ -d ~/tripleo-common/playbooks ]]; then
-        sudo ln -f -v -s ~/tripleo-common/playbooks /usr/share/tripleo-common/playbooks
-    fi
-    if [[ ! -d /usr/share/openstack-tripleo-validations.bak ]]; then
-        sudo mv -v /usr/share/openstack-tripleo-validations{,.bak}
-    fi
-    if [[ -d ~/tripleo-validations ]]; then
-        sudo ln -f -v -s ~/tripleo-validations /usr/share/openstack-tripleo-validations
-    fi
     if [[ -d ~/tripleo-ansible ]]; then
-        if [[ ! -d ~/dist ]]; then mkdir ~/dist; fi
-        pushd /usr/share/ansible/
-        # playbooks
-        sudo mv -v tripleo-playbooks ~/dist
-        sudo ln -f -v -s ~/tripleo-ansible/tripleo_ansible/playbooks tripleo-playbooks
-
-        ## Instead rely on adding ~/tripleo-ansible/tripleo_ansible/{roles,plugins}
-        ## to the ansible path when config-download is run manually
-        ## see ~/ussuri/standard/deploy-config-download.sh and similar
-        # 
-        ## roles
-        # sudo mv -v roles ~/dist
-        # sudo ln -f -v -s ~/tripleo-ansible/tripleo_ansible/roles roles
-        ## plugins
-        # sudo mv -v plugins ~/dist
-        # sudo ln -f -v -s ~/tripleo-ansible/tripleo_ansible/ansible_plugins plugins
+        TARGET=/home/stack/tripleo-ansible/tripleo_ansible/roles/
+        # swap out tripleo-ansible/roles/tripleo_ceph_* roles
+        pushd /usr/share/ansible/roles/
+        for D in tripleo_ceph_{common,run_ansible,uuid,work_dir}; do
+            sudo mv -v $D $D.dist
+            sudo ln -v -s $TARGET/$D $D
+        done
         popd
     fi
-    popd
 fi
 # -------------------------------------------------------
