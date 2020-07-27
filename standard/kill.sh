@@ -4,7 +4,7 @@ CLEAN=1
 if [[ $CLEAN -eq 1 ]]; then
     cat /dev/null > /tmp/to_clean
     for S in $(openstack server list -f value -c Name | grep ceph); do
-        echo $S >> /tmp/to_clean
+        echo $S | sed s/oc// >> /tmp/to_clean
     done
 fi
 
