@@ -1,8 +1,8 @@
 #!/bin/bash
 
 METAL=0
-HEAT=0
-DOWN=1
+HEAT=1
+DOWN=0
 CHECK=0
 
 STACK=oc0
@@ -88,7 +88,7 @@ if [[ $DOWN -eq 1 ]]; then
         echo "Test ansible ping"
         ansible -i $INV all -m ping
         echo "pushd $DIR/$STACK"
-        echo 'ansible -i inventory.yaml all -m shell -b -a "hostname"'
+        echo 'ansible -i tripleo-ansible-inventory.yaml all -m shell -b -a "hostname"'
 
         # # check that the inventory will work for ceph roles
         # ansible -i $INV -m ping ceph_mon
