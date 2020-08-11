@@ -2,21 +2,24 @@
 
 OVERALL=1
 MDS=0
-CINDER=1
-GLANCE=1
-NOVA=1
+CINDER=0
+GLANCE=0
+NOVA=0
 
-DIR=config-download
+DIR=~/config-download
 STACK=oc0
 RC=/home/stack/${STACK}rc
 
 function run_on_mon {
-    ansible --private-key /home/stack/.ssh/id_rsa_tripleo -i $DIR/inventory.yaml mons[0] -b -m shell -a "podman exec ceph-mon-\$HOSTNAME $1"
+    ansible --private-key /home/stack/.ssh/id_rsa_tripleo -i $DIR/$STACK/tripleo-ansible-inventory.yaml osds[0] -b -m shell -a "podman exec ceph-mon-\$HOSTNAME $1"
+    # mons[0] # Why is the ceph-mon on the storage node?
 }
 
 source $RC
 
 if [ $OVERALL -eq 1 ]; then
+    echo " --------- enabled overcloud services --------- "
+    openstack endpoint list -c "Service Name" -f value
     echo " --------- ceph -s --------- "
     run_on_mon "ceph -s"
     echo " --------- ceph df --------- "
