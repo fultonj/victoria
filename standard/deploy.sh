@@ -1,16 +1,22 @@
 #!/bin/bash
 
 METAL=0
-HEAT=1
-DOWN=0
+HEAT=0
+DOWN=1
 CHECK=0
-CONF=0
 
 STACK=oc0
-DIR=$PWD/config-download
+DIR=~/config-download
 NODE_COUNT=0
 
 source ~/stackrc
+# -------------------------------------------------------
+if [[ $(($HEAT + $DOWN)) -gt 1 ]]; then
+    echo "HEAT ($HEAT) and DOWN ($DOWN) cannot both be 1."
+    echo "HEAT will run config-download the first time."
+    echo "Only use DOWN for subsequent config-download runs."
+    exit 1
+fi
 # -------------------------------------------------------
 if [[ $METAL -eq 1 ]]; then
     # 4 minutes
@@ -28,7 +34,7 @@ fi
 # and --quiet being 0)
 # -------------------------------------------------------
 if [[ $HEAT -eq 1 ]]; then
-    # 7 minutes
+    # tripleo-client will use ansible to run heat and config-download
     if [[ ! -d ~/templates ]]; then
         ln -s /usr/share/openstack-tripleo-heat-templates ~/templates
     fi
@@ -61,97 +67,54 @@ if [[ $HEAT -eq 1 ]]; then
          -e no-metalsmith.yaml \
          -e overrides.yaml \
          --libvirt-type qemu
-
-         # add --stack-only to use DOWN and CONF
 fi
 # -------------------------------------------------------
 if [[ $DOWN -eq 1 ]]; then
-    echo "Get status of $STACK from Heat"
-    STACK_STATUS=$(openstack stack list -c "Stack Name" -c "Stack Status" \
-	-f value | grep $STACK | awk {'print $2'});
-    if [[ ! ($STACK_STATUS == "CREATE_COMPLETE" || 
-                 $STACK_STATUS == "UPDATE_COMPLETE") ]]; then
-	echo "Exiting. Status of $STACK is $STACK_STATUS"
-	exit 1
-    fi
-    if [[ -d $DIR ]]; then rm -rf $DIR; fi
-    openstack overcloud config download \
-              --name $STACK \
-              --config-dir $DIR
-    if [[ ! -d $DIR ]]; then
-	echo "tripleo-config-download cmd didn't create $DIR"
-    else
-	pushd $DIR/$STACK
-        if [[ ! -e ansible.cfg ]]; then
-            # Assume I don't yet have https://review.opendev.org/#/c/725602
-            echo "Genereating ansible.cfg in $PWD"
-            openstack tripleo config generate ansible
-            if [[ -e ~/ansible.cfg ]]; then
-                mv -v ~/ansible.cfg ansible.cfg 
-            fi
-            if [[ ! -e ansible.cfg ]]; then
-                echo "Unable to create ansible.cfg. Giving up."
-                exit 1
-            fi
-        fi
-	tripleo-ansible-inventory --static-yaml-inventory \
-                                  tripleo-ansible-inventory.yaml \
-                                  --stack $STACK
-	if [[ ! -e tripleo-ansible-inventory.yaml ]]; then
-	    echo "Unable to create inventory. Giving up."
-	    exit 1
-	fi
-        ln -s tripleo-ansible-inventory.yaml inventory.yaml
-        echo "Ensure ~/.ssh/id_rsa_tripleo exists"
-	if [[ ! -e ~/.ssh/id_rsa_tripleo ]]; then
-            cp ~/.ssh/id_rsa ~/.ssh/id_rsa_tripleo
-        fi
-        echo "Test ansible ping"
-	ansible -i tripleo-ansible-inventory.yaml all -m ping
-	popd        
-	echo "pushd $DIR/$STACK"
-	echo 'ansible -i inventory.yaml all -m shell -b -a "hostname"'
-    fi
-fi
-# -------------------------------------------------------
-if [[ $CHECK -eq 1 ]]; then
-    pushd $DIR/$STACK
-    ansible -i tripleo-ansible-inventory.yaml -m ping ceph_mon
-    ansible -i tripleo-ansible-inventory.yaml -m ping ceph_client
-    ansible -i tripleo-ansible-inventory.yaml -m ping ceph_osd
-    grep ceph tripleo-ansible-inventory.yaml
-    if [[ $(grep osd tripleo-ansible-inventory.yaml  | wc -l) == 0 ]]; then
-        echo "There are no OSDs in the inventory so the deployment will fail."
-        echo "Exiting early."
+    INV=tripleo-ansible-inventory.yaml
+    if [[ ! -d $DIR/$STACK ]]; then
+        echo "$DIR/$STACK does not exist, Create it by setting HEAT=1"
         exit 1
     fi
-    popd
-fi
-# -------------------------------------------------------
-if [[ $CONF -eq 1 ]]; then
-    if [[ ! -d $DIR ]]; then
-	echo "tripleo-config-download cmd didn't create $DIR"
-        exit 1;
-    fi
-    #echo "about to execute the following plays:"
-    #ansible-playbook $DIR/deploy_steps_playbook.yaml --list-tasks
     pushd $DIR/$STACK
-    time ansible-playbook-3 \
-	 -v \
-	 --ssh-extra-args "-o StrictHostKeyChecking=no" --timeout 240 \
-	 --become \
-	 -i tripleo-ansible-inventory.yaml \
-         --private-key ~/.ssh/id_rsa_tripleo \
-	 deploy_steps_playbook.yaml
 
-         # Just re-run ceph
-         # -e gather_facts=true -e @global_vars.yaml \
-         # --tags external_deploy_steps \
+    if [[ $CHECK -eq 1 ]]; then
+        if [[ ! -e ~/.ssh/id_rsa_tripleo ]]; then
+            cp ~/.ssh/id_rsa ~/.ssh/id_rsa_tripleo
+        fi
+        if [[ ! -e $INV ]]; then
+            echo "$INV does not exist, Create it by setting HEAT=1"
+            exit 1
+        fi
+        echo "Test ansible ping"
+        ansible -i $INV all -m ping
+        echo "pushd $DIR/$STACK"
+        echo 'ansible -i inventory.yaml all -m shell -b -a "hostname"'
+
+        # # check that the inventory will work for ceph roles
+        # ansible -i $INV -m ping ceph_mon
+        # ansible -i $INV -m ping ceph_client
+        # ansible -i $INV -m ping ceph_osd
+        # grep ceph $INV
+        # if [[ $(grep osd $INV  | wc -l) == 0 ]]; then
+        #     # this happened with metalsmith (need to revisit)
+        #     echo "There are no OSDs in the inventory so the deployment will fail."
+        #     echo "Exiting early."
+        #     exit 1
+        # fi
+
+    fi
+    # -------------------------------------------------------
+    # run it all
+    bash ansible-playbook-command.sh
+
+    # Just re-run ceph
+    # bash ansible-playbook-command.sh --tags external_deploy_steps
+
+    # Just re-run ceph prepration without running ceph
+    # bash ansible-playbook-command.sh --tags external_deploy_steps --skip-tags ceph,step4
     
-         # Test validations
-         # --tags opendev-validation-ceph
-    
-         # Pick up after good ceph install (need to test this)
-         # --tags step2,step3,step4,step5,post_deploy_steps,external --skip-tags ceph
+    # Pick up after good ceph install (need to test this)
+    # bash ansible-playbook-command.sh --tags step2,step3,step4,step5,post_deploy_steps,external --skip-tags ceph
+
    popd
 fi
