@@ -11,8 +11,7 @@ STACK=oc0
 RC=/home/stack/${STACK}rc
 
 function run_on_mon {
-    ansible --private-key /home/stack/.ssh/id_rsa_tripleo -i $DIR/$STACK/tripleo-ansible-inventory.yaml osds[0] -b -m shell -a "podman exec ceph-mon-\$HOSTNAME $1"
-    # mons[0] # Why is the ceph-mon on the storage node?
+    ansible --private-key /home/stack/.ssh/id_rsa_tripleo -i $DIR/$STACK/tripleo-ansible-inventory.yaml mons[0] -b -m shell -a "podman exec ceph-mon-\$HOSTNAME $1"
 }
 
 source $RC
