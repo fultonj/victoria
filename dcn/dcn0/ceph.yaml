@@ -3,9 +3,8 @@ parameter_defaults:
   CephAnsiblePlaybookVerbosity: 3
   CephPoolDefaultSize: 1
   CephPoolDefaultPgNum: 32
-  CephAnsibleEnvironmentVariables:
-    ANSIBLE_SSH_CONTROL_PATH: '/home/stack/ansible-ssh'
-    ANSIBLE_HOST_KEY_CHECKING: 'False'
+  # CephAnsibleEnvironmentVariables:
+  #   ANSIBLE_HOST_KEY_CHECKING: 'False'
   CephConfigOverrides:
     mon:
       osd_recovery_op_priority: 3

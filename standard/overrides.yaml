@@ -9,9 +9,8 @@ parameter_defaults:
   CephAnsiblePlaybookVerbosity: 3
   CephPoolDefaultSize: 1
   CephPoolDefaultPgNum: 32
-  CephAnsibleEnvironmentVariables:
-    ANSIBLE_SSH_CONTROL_PATH: '/home/stack/ansible-ssh'
-    ANSIBLE_HOST_KEY_CHECKING: 'False'
+  # CephAnsibleEnvironmentVariables:
+  #   ANSIBLE_HOST_KEY_CHECKING: 'False'
   CephAnsibleExtraConfig:
     ceph_osd_docker_cpu_limit: 1
   CephConfigOverrides:
