@@ -108,10 +108,10 @@ if [[ $DOWN -eq 1 ]]; then
     bash ansible-playbook-command.sh
 
     # Just re-run ceph
-    # bash ansible-playbook-command.sh --tags external_deploy_steps
+    # bash ansible-playbook-command.sh --tags external_deploy_steps --skip-tags step4,step5,post_deploy_steps
 
     # Just re-run ceph prepration without running ceph
-    # bash ansible-playbook-command.sh --tags external_deploy_steps --skip-tags ceph,step4
+    # bash ansible-playbook-command.sh --tags external_deploy_steps --skip-tags step4,step5,post_deploy_steps,ceph
     
     # Pick up after good ceph install (need to test this)
     # bash ansible-playbook-command.sh --tags step2,step3,step4,step5,post_deploy_steps,external --skip-tags ceph
