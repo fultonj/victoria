@@ -1,5 +1,5 @@
 #!/bin/bash
-RC=../control-plane/control-planerc
+RC=~/control-planerc
 if [[ -e $RC ]]; then
     source $RC
 else

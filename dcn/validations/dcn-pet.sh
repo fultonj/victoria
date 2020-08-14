@@ -33,7 +33,7 @@ KEYNAME="demokp-${AZ}"
 
 VOLUME_NAME="pet-volume-${AZ}"
 SERVER_NAME="pet-server-${AZ}"
-RC=../control-plane/control-planerc
+RC=~/control-planerc
 if [[ ! -e $RC ]]; then
     echo "$RC is missing. Aborting."
     exit 1
