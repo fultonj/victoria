@@ -13,6 +13,7 @@ if [[ $1 == 'alias' ]]; then
     fi
     echo 'alias os=openstack' >> ~/.bashrc
     echo 'alias ms=metalsmith' >> ~/.bashrc
+    echo 'alias "ll=ls -lhtr"' >> ~/.bashrc
     echo 'alias ans="cd /home/stack/tripleo-ceph"' >> ~/.bashrc
     echo 'alias poc="cd /home/stack/victoria/poc"' >> ~/.bashrc
 fi
