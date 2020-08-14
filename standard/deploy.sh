@@ -4,6 +4,7 @@ METAL=0
 HEAT=1
 DOWN=0
 CHECK=0
+LOG=1
 
 STACK=oc0
 DIR=~/config-download
@@ -77,6 +78,20 @@ if [[ $DOWN -eq 1 ]]; then
     fi
     pushd $DIR/$STACK
 
+    if [[ $LOG -eq 1 ]]; then
+        if [[ ! -d ~/log ]]; then
+            mkdir ~/log
+        fi
+        EXT=$(date +%F_%T)
+        echo "Rotate the logs"
+        for L in ~/ansible.log ~/config-download/config-download-latest/ceph-ansible/ceph_ansible_command.log; do
+            if [[ -e $L ]]; then
+                DST=$(basename $L)
+                mv $L ~/log/$DST.$EXT
+            fi
+        done
+    fi
+
     if [[ $CHECK -eq 1 ]]; then
         if [[ ! -e ~/.ssh/id_rsa_tripleo ]]; then
             cp ~/.ssh/id_rsa ~/.ssh/id_rsa_tripleo
@@ -105,16 +120,16 @@ if [[ $DOWN -eq 1 ]]; then
     fi
     # -------------------------------------------------------
     # run it all
-    bash ansible-playbook-command.sh
+    time bash ansible-playbook-command.sh
 
     # Just re-run ceph
-    # bash ansible-playbook-command.sh --tags external_deploy_steps --skip-tags step4,step5,post_deploy_steps
+    # time bash ansible-playbook-command.sh --tags external_deploy_steps --skip-tags step4,step5,post_deploy_steps
 
     # Just re-run ceph prepration without running ceph
-    # bash ansible-playbook-command.sh --tags external_deploy_steps --skip-tags step4,step5,post_deploy_steps,ceph
+    # time bash ansible-playbook-command.sh --tags external_deploy_steps --skip-tags step4,step5,post_deploy_steps,ceph
     
     # Pick up after good ceph install (need to test this)
-    # bash ansible-playbook-command.sh --tags step2,step3,step4,step5,post_deploy_steps,external --skip-tags ceph
+    # time bash ansible-playbook-command.sh --tags step2,step3,step4,step5,post_deploy_steps,external --skip-tags ceph
 
    popd
 fi
