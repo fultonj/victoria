@@ -50,7 +50,7 @@ if [[ $HEAT -eq 1 ]]; then
          --libvirt-type qemu
     # For stack updates when central dcn will use dcn{0,1} ceph clusters
     # -e ~/victoria/dcn/control-plane/ceph_keys_update.yaml \
-    # -e ~/victoria/dcn/control-plane/dcn_update.yaml \
+    # -e ~/victoria/dcn/control-plane/glance_update.yaml \
 fi
 # -------------------------------------------------------
 if [[ $DOWN -eq 1 ]]; then
