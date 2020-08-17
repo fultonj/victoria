@@ -1,0 +1,10 @@
+{
+    "ANSIBLE_MODULE_ARGS": {
+        "tripleo_heat_resource_tree": {},
+        "introspection_data": {},
+        "average_guest_cpu_utilization_percentage": 50,
+        "average_guest_memory_size_in_mb": 2048
+    }
+}
+
+

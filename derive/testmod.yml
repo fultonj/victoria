@@ -1,0 +1,11 @@
+- name: test my new module
+  hosts: localhost
+  tasks:
+  - name: run the new module
+    tripleo_derive_hci_parameters:
+      average_guest_cpu_utilization_percentage: 50
+      average_guest_memory_size_in_mb: 2048
+    register: testout
+  - name: dump test output
+    debug:
+      msg: '{{ testout }}'

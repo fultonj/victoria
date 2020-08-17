@@ -1,3 +1,4 @@
+**/scratch
 **/dcn1
 tempest-deployer-input.conf
 ceph_keys.yaml
