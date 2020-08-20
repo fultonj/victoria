@@ -3,17 +3,16 @@
   hosts: localhost
   vars:
     tripleo_get_flatten_params: "{{ lookup('file', 'molecule/mock_params') | from_yaml }}"
-    tripleo_role_list: "{{ lookup('file', 'molecule/mock_roles') | from_yaml }}"
-    tripleo_all_nodes: "{{ lookup('file', 'molecule/mock_ironic_all') | from_yaml }}"
-    hci_profile_config: "{{ lookup('file', 'molecule/mock_hci_profile_config') | from_yaml }}"
-    hci_profile: default
-    num_phy_cores_per_numa_node_for_pmd: 1
-    hw_data_required: true
+    hw_data:  "{{ lookup('file', 'molecule/mock_baremetal_ComputeHCI') | from_yaml }}"
   tasks:
+  - name: set heat resource tree
+    set_fact:
+      tripleo_heat_resource_tree: "{{ tripleo_get_flatten_params.stack_data.heat_resource_tree }}"
+
   - name: run the new module
     tripleo_derive_hci_parameters:
-      #tripleo_heat_resource_tree: "{{ tripleo_heat_resource_tree }}"
-      #introspection_data: "{{ hw_data }}"
+      tripleo_heat_resource_tree: "{{ tripleo_heat_resource_tree }}"
+      introspection_data: "{{ hw_data }}"
       average_guest_cpu_utilization_percentage: 50
       average_guest_memory_size_in_mb: 2048
     register: hci_derived_parameters
