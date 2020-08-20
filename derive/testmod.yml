@@ -4,6 +4,7 @@
   vars:
     tripleo_get_flatten_params: "{{ lookup('file', 'molecule/mock_params') | from_yaml }}"
     hw_data:  "{{ lookup('file', 'molecule/mock_baremetal_ComputeHCI') | from_yaml }}"
+    previous_derived_parameters: {'foo': 'bar'}
   tasks:
   - name: set heat resource tree
     set_fact:
@@ -15,7 +16,9 @@
       introspection_data: "{{ hw_data }}"
       average_guest_cpu_utilization_percentage: 50
       average_guest_memory_size_in_mb: 2048
+      derived_parameters: "{{ previous_derived_parameters }}"
     register: hci_derived_parameters
+
   - name: dump test output
     debug:
       msg: '{{ hci_derived_parameters }}'
