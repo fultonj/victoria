@@ -6,6 +6,7 @@ DIR=scratch
 KILL=1
 MYMODNAME=tripleo_derive_hci_parameters
 MYMODPATH=~/git/openstack/tripleo-ansible/tripleo_ansible/ansible_plugins/modules
+MYMOCKPATH=~/git/openstack/tripleo-ansible/tripleo_ansible/roles/tripleo_derived_parameters/molecule
 MYMODFILE="$MYMODNAME.py"
 MYARGSFILE=args.json
 
@@ -40,6 +41,10 @@ cp ../../args.json .
 
 # Get a playbook to run it with
 cp ../../testmod.yml .
+
+if [[ -d $MYMOCKPATH ]]; then
+    ln -s $MYMOCKPATH
+fi
 
 echo "cd $PWD"
 echo ". venv/bin/activate"
