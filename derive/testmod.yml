@@ -6,13 +6,10 @@
     hw_data:  "{{ lookup('file', 'molecule/mock_baremetal_ComputeHCI') | from_yaml }}"
     previous_derived_parameters: {'foo': 'bar'}
   tasks:
-  - name: set heat resource tree
-    set_fact:
-      tripleo_heat_resource_tree: "{{ tripleo_get_flatten_params.stack_data.heat_resource_tree }}"
-
   - name: run the new module
     tripleo_derive_hci_parameters:
-      tripleo_heat_resource_tree: "{{ tripleo_heat_resource_tree }}"
+      tripleo_heat_resource_tree: "{{ tripleo_get_flatten_params.stack_data.heat_resource_tree }}"
+      tripleo_environment_parameters: "{{ tripleo_get_flatten_params.stack_data.environment_parameters }}"
       introspection_data: "{{ hw_data }}"
       average_guest_cpu_utilization_percentage: 50
       average_guest_memory_size_in_mb: 2048
@@ -22,17 +19,3 @@
   - name: dump test output
     debug:
       msg: '{{ hci_derived_parameters }}'
-
-  - name: add hci_derived_parameters to derived_parameters_result
-    set_fact:
-      mock_derived_parameters_result:
-        NovaReservedHostMemory: "{{ hci_derived_parameters['nova_reserved_mem_mb'] }}"
-        NovaCPUAllocationRatio: "{{ hci_derived_parameters['cpu_allocation_ratio'] }}"
-    when:
-      - hci_derived_parameters['valid_input']
-
-  - name: Fail if tripleo_derive_hci_parameters module failed
-    fail:
-      msg: "tripleo_derive_hci_parameters failed: {{ hci_derived_parameters['message'] }}"
-    when:
-      - not hci_derived_parameters['valid_input']

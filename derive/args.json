@@ -1,6 +1,6 @@
 {
     "ANSIBLE_MODULE_ARGS": {
-        "average_guest_cpu_utilization_percentage": 50,
+        "average_guest_cpu_utilization_percentage": 20,
         "average_guest_memory_size_in_mb": 2048,
         "derived_parameters": {
             "canary": 42
@@ -38,7 +38,7 @@
                     ]
                 },
                 "cpu_arch": "x86_64",
-                "cpus": 2,
+                "cpus": 56,
                 "error": null,
                 "extra": {
                     "cpu": {
@@ -223,7 +223,7 @@
                     },
                     "memory": {
                         "total": {
-                            "size": 6144655360
+                            "size": 274877766206
                         }
                     },
                     "network": {
@@ -589,8 +589,8 @@
                         }
                     ],
                     "memory": {
-                        "physical_mb": 5860,
-                        "total": 5951889408
+                        "physical_mb": 256000,
+                        "total": 274877766206
                     },
                     "system_vendor": {
                         "manufacturer": "Red Hat",
@@ -604,7 +604,7 @@
                 "macs": [
                     "24:42:00:68:d0:30"
                 ],
-                "memory_mb": 5860,
+                "memory_mb": 256000,
                 "numa_topology": {
                     "cpus": [
                         {
@@ -641,6 +641,95 @@
             "error": null,
             "failed": false,
             "success": true
+        },
+        "tripleo_environment_parameters": {
+            "ApacheMaxRequestWorkers": 100,
+            "ApacheServerLimit": 100,
+            "CephAnsibleDisksConfig": {
+                "devices": [
+                    "/dev/sdb"
+                ],
+                "osd_objectstore": "bluestore",
+                "osd_scenario": "lvm"
+            },
+            "CephAnsibleEnvironmentVariables": {
+                "ANSIBLE_HOST_KEY_CHECKING": "False",
+                "ANSIBLE_SSH_CONTROL_PATH": "/home/stack/ansible-ssh"
+            },
+            "CephAnsibleExtraConfig": {
+                "ceph_osd_docker_cpu_limit": 1
+            },
+            "CephAnsiblePlaybook": [
+                "default"
+            ],
+            "CephAnsiblePlaybookVerbosity": 3,
+            "CephAnsibleRepo": "storage8-ceph-nautilus",
+            "CephConfigOverrides": {
+                "osd_max_backfills": 1,
+                "osd_recovery_max_active": 3,
+                "osd_recovery_op_priority": 3
+            },
+            "CephPoolDefaultPgNum": 32,
+            "CephPoolDefaultSize": 1,
+            "CinderBackupBackend": "ceph",
+            "CinderEnableIscsiBackend": false,
+            "CinderEnableRbdBackend": true,
+            "CinderWorkers": 1,
+            "CloudDomain": "localdomain",
+            "CloudName": "overcloud.localdomain",
+            "CloudNameCtlplane": "overcloud.ctlplane.localdomain",
+            "CloudNameInternal": "overcloud.internalapi.localdomain",
+            "CloudNameStorage": "overcloud.storage.localdomain",
+            "CloudNameStorageManagement": "overcloud.storagemgmt.localdomain",
+            "ComputeCount": 0,
+            "ComputeHCICount": 1,
+            "ComputeHCISchedulerHints": {
+                "capabilities:node": "0-ceph-%index%"
+            },
+            "ConfigDebug": true,
+            "ControllerCount": 1,
+            "ControllerExtraConfig": {
+                "nova::network::neutron::timeout": "60"
+            },
+            "ControllerSchedulerHints": {
+                "capabilities:node": "0-controller-%index%"
+            },
+            "DatabaseSyncTimeout": 900,
+            "DeployIdentifier": "",
+            "DockerInsecureRegistryAddress": [
+                "192.168.24.1:8787"
+            ],
+            "EnablePaunch": false,
+            "GlanceBackend": "rbd",
+            "GlanceWorkers": 1,
+            "GnocchiMetricdWorkers": 1,
+            "GnocchiRbdPoolName": "",
+            "HeatWorkers": 1,
+            "KeystoneWorkers": 1,
+            "ManilaCephFSDataPoolPGNum": 16,
+            "ManilaCephFSMetadataPoolPGNum": 16,
+            "MistralDockerGroup": false,
+            "NeutronMetadataWorkers": 1,
+            "NeutronWorkers": 1,
+            "NotificationDriver": "noop",
+            "NovaComputeLibvirtType": "qemu",
+            "NovaEnableRbdBackend": true,
+            "NovaReservedHostMemory": 512,
+            "NovaSchedulerWorkers": 1,
+            "NovaWorkers": 1,
+            "NtpServer": "pool.ntp.org",
+            "OvercloudComputeFlavor": "baremetal",
+            "OvercloudComputeHCIFlavor": "baremetal",
+            "OvercloudControlFlavor": "baremetal",
+            "PlacementWorkers": 1,
+            "RootStackName": "overcloud",
+            "SaharaWorkers": 1,
+            "StackAction": "CREATE",
+            "SwiftWorkers": 1,
+            "UndercloudHostsEntries": [
+                "192.168.24.1 undercloud.ctlplane.localdomain undercloud.ctlplane"
+            ],
+            "UpdateIdentifier": ""
         },
         "tripleo_heat_resource_tree": {
             "parameters": {
