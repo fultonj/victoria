@@ -10,6 +10,7 @@
     tripleo_derive_hci_parameters:
       tripleo_heat_resource_tree: "{{ tripleo_get_flatten_params.stack_data.heat_resource_tree }}"
       tripleo_environment_parameters: "{{ tripleo_get_flatten_params.stack_data.environment_parameters }}"
+      tripleo_role_name: "ComputeHCI"
       introspection_data: "{{ hw_data }}"
       average_guest_cpu_utilization_percentage: 50
       average_guest_memory_size_in_mb: 2048
