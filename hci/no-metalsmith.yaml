@@ -1,0 +1,11 @@
+---
+parameter_defaults:
+  ControllerCount: 3
+  ComputeCount: 0
+  ComputeHCICount: 3
+  ControllerSchedulerHints:
+    'capabilities:node': '0-controller-%index%'
+  ComputeHCISchedulerHints:
+    'capabilities:node': '0-ceph-%index%'
+  OvercloudControlFlavor: baremetal
+  OvercloudComputeHCIFlavor: baremetal
