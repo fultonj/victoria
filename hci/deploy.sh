@@ -6,7 +6,7 @@ DOWN=0
 CHECK=0
 LOG=1
 
-STACK=oc0
+STACK=overcloud
 DIR=~/config-download
 NODE_COUNT=0
 
@@ -35,7 +35,6 @@ fi
 # and --quiet being 0)
 # -------------------------------------------------------
 
-
 if [[ $HEAT -eq 1 ]]; then
     if [[ ! -e ~/hci_roles.yaml ]]; then
         openstack overcloud roles generate Controller ComputeHCI -o ~/hci_roles.yaml
@@ -57,23 +56,34 @@ if [[ $HEAT -eq 1 ]]; then
     # else
     #     -e no-metalsmith.yaml
     time openstack overcloud -v deploy \
+         -v \
          --stack $STACK \
-         --templates ~/templates/ \
+         --templates \
          -r ~/hci_roles.yaml \
-         -n ../network-data.yaml \
-         -e ~/templates/environments/net-multiple-nics.yaml \
-         -e ~/templates/environments/network-isolation.yaml \
-         -e ~/templates/environments/network-environment.yaml \
-         -e ~/templates/environments/disable-telemetry.yaml \
-         -e ~/templates/environments/low-memory-usage.yaml \
-         -e ~/templates/environments/enable-swap.yaml \
-         -e ~/templates/environments/podman.yaml \
-         -e ~/templates/environments/ceph-ansible/ceph-ansible.yaml \
+         -p /usr/share/openstack-tripleo-heat-templates/plan-samples/plan-environment-derived-params.yaml \
+         -e /usr/share/openstack-tripleo-heat-templates/environments/disable-telemetry.yaml \
+         -e /usr/share/openstack-tripleo-heat-templates/environments/low-memory-usage.yaml \
+         -e /usr/share/openstack-tripleo-heat-templates/environments/enable-swap.yaml \
+         -e /usr/share/openstack-tripleo-heat-templates/environments/podman.yaml \
+         -e /usr/share/openstack-tripleo-heat-templates/environments/ceph-ansible/ceph-ansible.yaml \
          -e ~/generated-container-prepare.yaml \
          -e ~/domain.yaml \
          -e no-metalsmith.yaml \
          -e overrides.yaml \
          --libvirt-type qemu
+
+    # set aside network isolation for now
+    #
+    #      -n ../network-data.yaml \
+    #      -e ~/templates/environments/net-multiple-nics.yaml \
+    #      -e ~/templates/environments/network-isolation.yaml \
+    #      -e ~/templates/environments/network-environment.yaml \
+    #      -e ~/templates/environments/disable-telemetry.yaml \
+    #      -e ~/templates/environments/low-memory-usage.yaml \
+    #      -e ~/templates/environments/enable-swap.yaml \
+    #      -e ~/templates/environments/podman.yaml \
+    #      -e ~/templates/environments/ceph-ansible/ceph-ansible.yaml \
+
 fi
 # -------------------------------------------------------
 if [[ $DOWN -eq 1 ]]; then

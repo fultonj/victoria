@@ -1,2 +1,2 @@
 #!/bin/bash
-openstack overcloud delete oc0 --yes
+openstack overcloud delete overcloud --yes
