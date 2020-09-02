@@ -4,10 +4,11 @@ OVERALL=0
 MDS=0
 CINDER=0
 GLANCE=0
-NOVA=1
+NOVA=0
+DERIVE=1
 
 DIR=~/config-download
-STACK=oc0
+STACK=overcloud
 RC=/home/stack/${STACK}rc
 
 function run_on_mon {
@@ -100,4 +101,39 @@ if [ $NOVA -eq 1 ]; then
         sleep 60
         openstack server list
     fi
+fi
+
+if [ $DERIVE -eq 1 ]; then
+    echo -e "\nChecking deployment plan:\n"
+    # what is in the deployment plan?
+    source ~/stackrc
+    if [[ -d $STACK ]]; then
+        rm -rf $STACK
+    fi
+    mkdir $STACK
+    pushd $STACK
+    openstack overcloud plan export $STACK
+    if [[ $? -gt 0 ]]; then
+        echo "Unable to download deployment plan"
+        exit 1
+    fi
+    tar xf $STACK.tar.gz
+    if [[ -e plan-environment.yaml ]]; then
+        echo -e "\nDoes plan-environment.yaml contain string 'derived'?"
+        grep derived -A 10 plan-environment.yaml
+        if [[ $? -gt 0 ]]; then
+            echo -e "... string not found"
+            ls -l plan-environment.yaml
+        fi
+    else
+        echo -e "There is no plan-environment.yaml file"
+    fi
+    popd
+
+    echo -e "\nChecking nova configuration on hosts:\n"
+    # was it applied to hosts?
+    ANS="ansible --private-key /home/stack/.ssh/id_rsa_tripleo -i $DIR/$STACK/tripleo-ansible-inventory.yaml -b "
+    GREP="egrep 'reserved_host_memory_mb|cpu_allocation_ratio' /etc/nova/nova.conf"
+    echo "Compute output of $GREP"
+    $ANS ComputeHCI -m shell -a "podman exec -ti nova_compute $GREP" | grep -v \#
 fi
