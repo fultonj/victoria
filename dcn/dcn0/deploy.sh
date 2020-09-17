@@ -33,10 +33,6 @@ if [[ $HEAT -eq 1 ]]; then
          --config-download-timeout 240 \
          --templates ~/templates/ \
          -r ~/dcn_roles.yaml \
-         -n ~/victoria/network-data.yaml \
-         -e ~/templates/environments/net-multiple-nics.yaml \
-         -e ~/templates/environments/network-isolation.yaml \
-         -e ~/templates/environments/network-environment.yaml \
          -e ~/templates/environments/disable-telemetry.yaml \
          -e ~/templates/environments/low-memory-usage.yaml \
          -e ~/templates/environments/enable-swap.yaml \
@@ -45,11 +41,18 @@ if [[ $HEAT -eq 1 ]]; then
          -e ~/templates/environments/dcn-hci.yaml \
          -e ~/generated-container-prepare.yaml \
          -e ~/control-plane-export.yaml \
-         -e ~/dcn_ceph_keys.yaml \
          -e ~/victoria/dcn/dcn0/ceph.yaml \
          -e ~/victoria/dcn/dcn0/glance.yaml \
          -e ~/victoria/dcn/dcn0/overrides.yaml \
+         -e ../ceph-export-control-plane.yaml \
          --libvirt-type qemu
+
+         # Network isolation
+         # -n ~/victoria/network-data.yaml \
+         # -e ~/templates/environments/net-multiple-nics.yaml \
+         # -e ~/templates/environments/network-isolation.yaml \
+         # -e ~/templates/environments/network-environment.yaml \
+
 fi
 # -------------------------------------------------------
 if [[ $DOWN -eq 1 ]]; then

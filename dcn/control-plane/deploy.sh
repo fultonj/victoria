@@ -33,24 +33,28 @@ if [[ $HEAT -eq 1 ]]; then
          --config-download-timeout 240 \
          --templates ~/templates/ \
          -r ~/control_plane_roles.yaml \
-         -n ~/victoria/network-data.yaml \
-         -e ~/templates/environments/net-multiple-nics.yaml \
-         -e ~/templates/environments/network-isolation.yaml \
-         -e ~/templates/environments/network-environment.yaml \
          -e ~/templates/environments/disable-telemetry.yaml \
          -e ~/templates/environments/low-memory-usage.yaml \
          -e ~/templates/environments/enable-swap.yaml \
          -e ~/templates/environments/podman.yaml \
          -e ~/templates/environments/ceph-ansible/ceph-ansible.yaml \
+         -e ~/templates/environments/ceph-ansible/ceph-rgw.yaml \
          -e ~/generated-container-prepare.yaml \
          -e ~/domain.yaml \
          -e ~/victoria/dcn/control-plane/ceph.yaml \
-         -e ~/victoria/dcn/control-plane/ceph_keys.yaml \
          -e ~/victoria/dcn/control-plane/overrides.yaml \
          --libvirt-type qemu
+
     # For stack updates when central dcn will use dcn{0,1} ceph clusters
-    # -e ~/victoria/dcn/control-plane/ceph_keys_update.yaml \
-    # -e ~/victoria/dcn/control-plane/glance_update.yaml \
+    # -e glance_update.yaml \
+    # -e ../ceph-export-2-stacks.yaml \
+
+    # For network isolation
+    # -n ~/victoria/network-data.yaml \
+    # -e ~/templates/environments/net-multiple-nics.yaml \
+    # -e ~/templates/environments/network-isolation.yaml \
+    # -e ~/templates/environments/network-environment.yaml \
+
 fi
 # -------------------------------------------------------
 if [[ $DOWN -eq 1 ]]; then

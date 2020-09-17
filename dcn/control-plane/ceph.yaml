@@ -15,5 +15,6 @@ parameter_defaults:
     osd_objectstore: bluestore
     devices:
       - /dev/sdb
+      - /dev/sdc
   CephAnsibleExtraConfig:
     ceph_osd_docker_cpu_limit: 1

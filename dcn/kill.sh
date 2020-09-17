@@ -1,6 +1,6 @@
 #!/bin/bash
 
-CLEAN=1
+CLEAN=0
 source ~/stackrc
 
 if [[ $CLEAN -eq 1 ]]; then
@@ -16,10 +16,9 @@ for STACK in $(openstack stack list -f value -c "Stack Name"); do
     openstack overcloud delete $STACK --yes
 done
 
-rm -f control-plane/ceph_keys.yaml
-rm -f control-plane/ceph_keys_update.yaml
-rm -f ~/control-plane-export.yaml
-rm -f ~/dcn_ceph_keys.yaml
+rm -f control-plane-export.yaml
+rm -f control-plane-ceph-export.yaml
+rm -f ceph-export-2-stacks.yaml
 
 if [[ $CLEAN -eq 1 ]]; then
     for S in $(cat /tmp/ironic_names_to_clean); do

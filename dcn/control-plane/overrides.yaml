@@ -2,7 +2,7 @@
 parameter_defaults:
   ContainerHealthcheckDisabled: true
   NtpServer: pool.ntp.org
-  ControllerCount: 1
+  ControllerCount: 3
   ComputeCount: 0
   ComputeHCICount: 1
   OvercloudControlFlavor: baremetal

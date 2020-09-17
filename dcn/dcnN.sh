@@ -23,14 +23,6 @@ for n in $(seq 1 $N); do
     fi
     echo "Creating $deploy (deployment $n out of $N)"    
 
-    if [[ -e /home/stack/dcn_ceph_keys.yaml ]]; then
-        echo "Backing up ~/dcn_ceph_keys.yaml into previous deployment"
-        k=$(($n-1))
-        cp /home/stack/dcn_ceph_keys.yaml dcn${k}/dcn_ceph_keys.yaml.bak
-    fi
-    echo "(Re)Generating ~/dcn_ceph_keys.yaml with new CephExtraKeys"
-    bash ceph_keys.sh 2
-
     mkdir $deploy
     cp dcn0/ceph.yaml $deploy/ceph.yaml
     sed s/dcn0/$deploy/g -i $deploy/ceph.yaml

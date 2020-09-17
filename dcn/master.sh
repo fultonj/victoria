@@ -3,28 +3,19 @@
 CONTROL=1
 EXPORT=1
 DCN0=1
-DCN1=0
-CONTROLUP=0
+DCN1=1
+CONTROLUP=1
 
 source ~/stackrc
 # -------------------------------------------------------
 if [[ $CONTROL -eq 1 ]]; then
-    echo "Generating control-plane/ceph_keys.yaml"
-    if [[ ! -e control-plane/ceph_keys.yaml ]]; then
-        bash ceph_keys.sh 1
-    fi
-    if [[ ! -e control-plane/ceph_keys.yaml ]]; then
-        echo "Failure: ceph_keys.sh 1"
-        exit 1
-    fi
-
     echo "Standing up control-plane deployment"
     pushd control-plane
     bash deploy.sh
     popd
 
     echo "Verify control-plane is working"
-    RC=control-plane/control-planerc
+    RC=/home/stack/control-planerc
     if [[ -e $RC ]]; then
         source $RC
         echo "Attempting to issue token from control-plane"
@@ -42,16 +33,15 @@ if [[ $CONTROL -eq 1 ]]; then
 fi
 # -------------------------------------------------------
 if [[ $EXPORT -eq 1 ]]; then
-    echo "Create ~/control-plane-export.yaml with export.sh"
-    bash export.sh
-    if [[ ! -e ~/control-plane-export.yaml ]]; then
-        echo "Unable to create ~/control-plane-export.yaml. Aborting."
+    openstack overcloud export -f --stack control-plane
+    openstack overcloud export ceph -f --stack control-plane
+
+    if [[ ! -e control-plane-export.yaml ]]; then
+        echo "Unable to create control-plane-export.yaml. Aborting."
         exit 1
     fi
-    echo "Create ~/dcn_ceph_keys.yaml with ceph_keys.sh 2"
-    bash ceph_keys.sh 2
-    if [[ ! -e ~/dcn_ceph_keys.yaml ]]; then
-        echo "Failure: ceph_keys.sh 2"
+    if [[ ! -e ceph-export-control-plane.yaml ]]; then
+        echo "Failure: openstack overcloud export ceph --stack control-plane"
         exit 1
     fi
 fi
@@ -74,15 +64,15 @@ fi
 # -------------------------------------------------------
 if [[ $CONTROLUP -eq 1 ]]; then
     echo "Create control-plane/ceph_keys_update.yaml with ceph_keys.sh 3"
-    bash ceph_keys.sh 3
-    if [[ ! -e control-plane/ceph_keys_update.yaml ]]; then
-        echo "Failure: ceph_keys.sh 3"
+    openstack overcloud export ceph -f --stack dcn0,dcn1
+    if [[ ! -e ceph-export-2-stacks.yaml ]]; then
+        echo "Failure: openstack overcloud export ceph --stack dcn0,dcn1"
         exit 1
     fi
     echo ""
     echo "Three more steps required to continue:"
     echo ""
-    echo "1. Update control-plane/deploy.sh to use control-plane/ceph_keys_update.yaml"
+    echo "1. Update control-plane/deploy.sh to use ceph-export-2-stacks.yaml"
     echo "2. Update control-plane/deploy.sh to use control-plane/glance_update.yaml"
     echo "3. Re-run control-plane/deploy.sh"
     echo "You may then test the deployment with use-multistore-glance.sh"
