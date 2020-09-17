@@ -7,8 +7,7 @@ else
     POOL=$1
 fi
 
-#STACKS="control-plane,dcn0,dcn1"
-STACKS="control-plane,dcn0"
+STACKS="control-plane,dcn0,dcn1"
 
 export ANSIBLE_DEPRECATION_WARNINGS=0
 export ANSIBLE_TRANSFORM_INVALID_GROUP_CHARS=ignore

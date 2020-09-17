@@ -34,8 +34,15 @@ fi
 echo "- List available stores"
 glance stores-info
 
-echo "- Create image in central and dcn0"
-glance --verbose image-create-via-import --disk-format qcow2 --container-format bare --name $NAME --file $IMG --import-method glance-direct --stores default_backend,dcn0
+glance image-create \
+--disk-format raw --container-format bare \
+--name cirros --file cirros-0.4.0-x86_64-disk.raw \
+--store default_backend
+
+echo "- Create image in central"
+# glance --verbose image-create-via-import --disk-format qcow2 --container-format bare --name cirros --uri $URL --import-method web-download --stores default_backend,dcn0
+
+# STATUS=$(openstack image show $NAME -f value -c status)
 
 ID=$(openstack image show $NAME -c id -f value)
 
@@ -47,7 +54,7 @@ bash ls_rbd.sh images
 
 echo "Copy the image from the default store to the dcn1 store:"
 
-glance image-import $ID --stores dcn1 --import-method copy-image
+glance image-import $ID --stores dcn0,dcn1 --import-method copy-image
 bash ls_rbd.sh images
 
 echo "- Show properties of $ID to see the stores"
