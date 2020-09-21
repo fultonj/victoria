@@ -20,3 +20,4 @@ parameter_defaults:
   # https://review.opendev.org/#/c/721562
   # ExtraConfig:
   #   nova::cross_az_attach: false
+  SELinuxMode: permissive

@@ -20,3 +20,4 @@ parameter_defaults:
   CephAnsibleRepo: tripleo-centos-ceph-nautilus
   EnablePaunch: False
   ConfigDebug: True
+  SELinuxMode: permissive
