@@ -69,11 +69,16 @@ if [[ $CONTROLUP -eq 1 ]]; then
         echo "Failure: openstack overcloud export ceph --stack dcn0,dcn1"
         exit 1
     fi
-    echo ""
-    echo "Three more steps required to continue:"
-    echo ""
-    echo "1. Update control-plane/deploy.sh to use ceph-export-2-stacks.yaml"
-    echo "2. Update control-plane/deploy.sh to use control-plane/glance_update.yaml"
-    echo "3. Re-run control-plane/deploy.sh"
-    echo "You may then test the deployment with use-multistore-glance.sh"
+
+    pushd control-plane
+    if [[ -e deploy-update.sh ]]; then
+        rm -f deploy-update.sh
+    fi
+    cp deploy.sh deploy-update.sh
+    sed -i s/qemu/qemu\ \\\\/g deploy-update.sh
+    sed -i s/#\ ONE/\\-e\ glance_update.yaml\ \\\\/g deploy-update.sh
+    sed -i s/#\ TWO/\\-e\ \\.\\.\\/ceph-export-2-stacks.yaml/g deploy-update.sh
+    bash deploy-update.sh
+    popd
+    echo "You may now test the deployment with validattions/use-multistore-glance.sh"
 fi

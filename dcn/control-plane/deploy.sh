@@ -44,6 +44,8 @@ if [[ $HEAT -eq 1 ]]; then
          -e ~/victoria/dcn/control-plane/ceph.yaml \
          -e ~/victoria/dcn/control-plane/overrides.yaml \
          --libvirt-type qemu
+         # ONE
+         # TWO
 
     # For stack updates when central dcn will use dcn{0,1} ceph clusters
     # -e glance_update.yaml \
