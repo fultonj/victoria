@@ -17,7 +17,7 @@ for STACK in $(openstack stack list -f value -c "Stack Name"); do
 done
 
 rm -f control-plane-export.yaml
-rm -f control-plane-ceph-export.yaml
+rm -f ceph-export-control-plane.yaml
 rm -f ceph-export-2-stacks.yaml
 rm -rf dcn1
 
