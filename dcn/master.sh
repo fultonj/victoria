@@ -87,5 +87,5 @@ if [[ $CONTROLUP -eq 1 ]]; then
     sed -i s/#\ TWO/\\-e\ \\.\\.\\/ceph-export-2-stacks.yaml/g deploy-update.sh
     bash deploy-update.sh
     popd
-    echo "You may now test the deployment with validattions/use-multistore-glance.sh"
+    echo "You may now test the deployment with validations/use-multistore-glance.sh"
 fi
