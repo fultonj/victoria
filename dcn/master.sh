@@ -54,6 +54,11 @@ if [[ $DCN0 -eq 1 ]]; then
         echo "DCN deployment failed. Aborting."
         exit 1
     fi
+    openstack aggregate show dcn0
+    if [[ $? -gt 0 ]]; then
+        echo "openstack aggregate dcn0 was not created. Aborting."
+        exit 1
+    fi
     popd
 fi
 # -------------------------------------------------------
