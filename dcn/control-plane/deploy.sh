@@ -15,8 +15,8 @@ if [[ $(($HEAT + $DOWN)) -gt 1 ]]; then
     exit 1
 fi
 # -------------------------------------------------------
-if [[ ! -e ~/control_plane_roles.yaml ]]; then
-    openstack overcloud roles generate Controller ComputeHCI -o ~/control_plane_roles.yaml
+if [[ ! -e control_plane_roles.yaml ]]; then
+    openstack overcloud roles generate Controller ComputeHCI -o control_plane_roles.yaml
 fi
 # -------------------------------------------------------
 # `openstack overcloud -v` should be passed along as
@@ -32,7 +32,7 @@ if [[ $HEAT -eq 1 ]]; then
          --stack $STACK \
          --config-download-timeout 240 \
          --templates ~/templates/ \
-         -r ~/control_plane_roles.yaml \
+         -r control_plane_roles.yaml \
          -e ~/templates/environments/disable-telemetry.yaml \
          -e ~/templates/environments/low-memory-usage.yaml \
          -e ~/templates/environments/enable-swap.yaml \
@@ -41,8 +41,8 @@ if [[ $HEAT -eq 1 ]]; then
          -e ~/templates/environments/ceph-ansible/ceph-rgw.yaml \
          -e ~/generated-container-prepare.yaml \
          -e ~/domain.yaml \
-         -e ~/victoria/dcn/control-plane/ceph.yaml \
-         -e ~/victoria/dcn/control-plane/overrides.yaml \
+         -e ceph.yaml \
+         -e overrides.yaml \
          --libvirt-type qemu
          # ONE
          # TWO
