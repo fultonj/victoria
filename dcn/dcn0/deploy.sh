@@ -15,8 +15,8 @@ if [[ $(($HEAT + $DOWN)) -gt 1 ]]; then
     exit 1
 fi
 # -------------------------------------------------------
-if [[ ! -e ~/dcn_roles.yaml ]]; then
-    openstack overcloud roles generate DistributedComputeHCI DistributedComputeHCIScaleOut -o ~/dcn_roles.yaml
+if [[ ! -e dcn_roles.yaml ]]; then
+    openstack overcloud roles generate DistributedComputeHCI DistributedComputeHCIScaleOut -o dcn_roles.yaml
 fi
 # -------------------------------------------------------
 # `openstack overcloud -v` should be passed along as
@@ -32,7 +32,7 @@ if [[ $HEAT -eq 1 ]]; then
          --stack $STACK \
          --config-download-timeout 240 \
          --templates ~/templates/ \
-         -r ~/dcn_roles.yaml \
+         -r dcn_roles.yaml \
          -e ~/templates/environments/disable-telemetry.yaml \
          -e ~/templates/environments/low-memory-usage.yaml \
          -e ~/templates/environments/enable-swap.yaml \
@@ -40,13 +40,14 @@ if [[ $HEAT -eq 1 ]]; then
          -e ~/templates/environments/ceph-ansible/ceph-ansible.yaml \
          -e ~/templates/environments/dcn-hci.yaml \
          -e ~/generated-container-prepare.yaml \
-         -e ~/control-plane-export.yaml \
-         -e ~/victoria/dcn/dcn0/ceph.yaml \
-         -e ~/victoria/dcn/dcn0/glance.yaml \
-         -e ~/victoria/dcn/dcn0/overrides.yaml \
+         -e ../control-plane-export.yaml \
          -e ../ceph-export-control-plane.yaml \
+         -e ceph.yaml \
+         -e glance.yaml \
+         -e overrides.yaml \
          --libvirt-type qemu
 
+    exit $?
          # Network isolation
          # -n ~/victoria/network-data.yaml \
          # -e ~/templates/environments/net-multiple-nics.yaml \
@@ -71,7 +72,9 @@ if [[ $DOWN -eq 1 ]]; then
     # bash ansible-playbook-command.sh --tags external_deploy_steps --skip-tags step4,step5,post_deploy_steps,ceph
     
     # Pick up after good ceph install (need to test this)
-    # bash ansible-playbook-command.sh --tags step2,step3,step4,step5,post_deploy_steps,external --skip-tags ceph
+    # bash ansible-playbook-command.sh --tags facts,step2,step3,step4,step5,post_deploy_steps,external --skip-tags ceph
+
+    exit $?
     popd
 fi
 
