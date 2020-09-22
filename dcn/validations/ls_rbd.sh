@@ -7,6 +7,8 @@ else
     POOL=$1
 fi
 
+rm -f ls_rbd*.txt 2> /dev/null
+
 STACKS="control-plane,dcn0,dcn1"
 
 export ANSIBLE_DEPRECATION_WARNINGS=0
@@ -14,12 +16,11 @@ export ANSIBLE_TRANSFORM_INVALID_GROUP_CHARS=ignore
 export ANSIBLE_LOG_PATH="/dev/null"
 export ANSIBLE_STDOUT_CALLBACK=null
 INV=inventory.yml
+rm -f $INV
+source ~/stackrc
 if [[ ! -e $INV ]]; then
-    source ~/stackrc
-    if [[ ! -e $INV ]]; then
-        tripleo-ansible-inventory --static-yaml-inventory $INV --stack $STACKS
-        # ansible -i inventory.yml all -m ping
-    fi
+    tripleo-ansible-inventory --static-yaml-inventory $INV --stack $STACKS
+    # ansible -i inventory.yml all -m ping
 fi
 
 echo "Collecting $POOL for $STACKS"

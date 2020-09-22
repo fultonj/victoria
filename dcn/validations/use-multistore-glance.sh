@@ -52,7 +52,7 @@ glance image-show $ID | grep disk_format
 openstack image list
 bash ls_rbd.sh images
 
-echo "Copy the image from the default store to the dcn1 store:"
+echo "Copy the image from the default store to the dcn0 and dcn1 stores:"
 
 glance image-import $ID --stores dcn0,dcn1 --import-method copy-image
 bash ls_rbd.sh images
