@@ -1,6 +1,6 @@
 #!/bin/bash
 
-METAL=0
+METAL=1
 HEAT=1
 DOWN=0
 CHECK=0
@@ -8,7 +8,7 @@ LOG=1
 
 STACK=oc0
 DIR=~/config-download
-NODE_COUNT=0
+NODE_COUNT=3
 
 source ~/stackrc
 # -------------------------------------------------------
@@ -24,7 +24,7 @@ if [[ $METAL -eq 1 ]]; then
     openstack overcloud node provision \
               --stack $STACK \
               --output deployed-metal-big.yaml \
-              metal-big.yaml
+              metal.yaml
 else
     echo "Assuming servers are provsioned or you ran no-metalsmith.sh"
 fi
@@ -55,6 +55,7 @@ if [[ $HEAT -eq 1 ]]; then
          --stack $STACK \
          --templates ~/templates/ \
          -n ../network-data.yaml \
+         -e ~/templates/environments/deployed-server-environment.yaml \
          -e ~/templates/environments/net-multiple-nics.yaml \
          -e ~/templates/environments/network-isolation.yaml \
          -e ~/templates/environments/network-environment.yaml \
@@ -65,7 +66,7 @@ if [[ $HEAT -eq 1 ]]; then
          -e ~/templates/environments/ceph-ansible/ceph-ansible.yaml \
          -e ~/generated-container-prepare.yaml \
          -e ~/domain.yaml \
-         -e no-metalsmith.yaml \
+         -e deployed-metal.yaml \
          -e overrides.yaml \
          --libvirt-type qemu
 fi
