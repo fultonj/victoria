@@ -25,7 +25,7 @@ os_version: 8
 undercloud_config:
   - section: DEFAULT
     option: clean_nodes
-    value: true
+    value: false
   - section: DEFAULT
     option: undercloud_enable_paunch
     value: false
