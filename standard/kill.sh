@@ -1,6 +1,6 @@
 #!/bin/bash
 
-CLEAN=1
+CLEAN=0
 if [[ $CLEAN -eq 1 ]]; then
     cat /dev/null > /tmp/ironic_names_to_clean
     openstack server list -f value -c Name -c ID | grep ceph | awk {'print $1'} > /tmp/nova_ids_to_clean
@@ -10,7 +10,7 @@ if [[ $CLEAN -eq 1 ]]; then
 fi
 
 openstack overcloud delete oc0 --yes
-#openstack overcloud node unprovision --yes --all --stack oc0 metal-big.yaml
+openstack overcloud node unprovision --yes --all --stack oc0 metal-big.yaml
 
 if [[ $CLEAN -eq 1 ]]; then
     for S in $(cat /tmp/ironic_names_to_clean); do

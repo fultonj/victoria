@@ -9,3 +9,4 @@ inventory.yml
 dcn_roles.yaml
 deploy-update.sh
 control_plane_roles.yaml
+deployed*

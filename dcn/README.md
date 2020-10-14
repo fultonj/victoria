@@ -34,6 +34,8 @@ and roles.
 
 ## How to deploy it with TripleO
 
+FIXME: convert to metalsmith and new network
+
 - Tag nodes with [ironic.sh](ironic.sh)
 - Run [master.sh](master.sh) which does the following:
   - Deploy control-plane with [control-plane/deploy.sh](control-plane/deploy.sh)

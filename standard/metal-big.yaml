@@ -2,25 +2,25 @@
 - name: Controller
   count: 3
   instances:
-    - hostname: controller-0
+    - hostname: oc0-controller-0
       name: oc0-controller-0
-    - hostname: controller-1
+    - hostname: oc0-controller-1
       name: oc0-controller-1
-    - hostname: controller-2
+    - hostname: oc0-controller-2
       name: oc0-controller-2
 - name: Compute
   count: 2
   instances:
-    - hostname: compute-0
-      name: oc0-compute-0
-    - hostname: compute-1
+    - hostname: oc0-compute-1
       name: oc0-compute-1
+    - hostname: oc0-compute-2
+      name: oc0-compute-2
 - name: CephStorage
   count: 3
   instances:
-    - hostname: ceph-0
+    - hostname: oc0-ceph-0
       name: oc0-ceph-0
-    - hostname: ceph-1
+    - hostname: oc0-ceph-1
       name: oc0-ceph-1
-    - hostname: ceph-2
+    - hostname: oc0-ceph-2
       name: oc0-ceph-2
