@@ -9,6 +9,8 @@ An overcloud deployed with network isolation containing:
 
 Nearly all overrides are in [overrides.yaml](overrides.yaml).
 
+FIXME: convert to metalsmith and new network
+
 Run [no-metalsmith.sh](no-metalsmith.sh) and then ensure
 [deploy.sh](deploy.sh) uses [no-metalsmith.yaml](no-metalsmith.yaml).
 This no-metalsmith script and template use nova scheduler hints based

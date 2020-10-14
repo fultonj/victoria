@@ -135,13 +135,12 @@ one shot. Now that they're tightly coupled my current approach is:
 Each of the following example deployments in this repository either
 has or will have an example toplogy file.
 
-- [substandard](../substandard): 3 controllers, 2 computes (or 1 of each)
 - [standard](../standard): 3 controllers, 2 computes, 3 ceph-storage (or 1 of each) with ceph-ansible 
 - [tripleo-ceph poc](../poc): 1 controller, 1 compute with [tripleo-ceph](https://review.opendev.org/#/c/723108)
 - [dcn](../dcn): DCN deployment with three toplogy files for three different stacks
 
-For example, my [substandard deploy script](../substandard/deploy.sh)
-directly references it's own [topology file](../substandard/metal-big.yaml)
+For example, my [standard deploy script](../standard/deploy.sh)
+directly references it's own [topology file](../standard/metal-big.yaml)
 in it's `openstack overcloud node provision` command. I might go back
 and update my [tripleo-lab/overrides.yml](../tripleo-lab/overrides.yml)
 so that I'm using tripleo-lab more efficiently but this is working for

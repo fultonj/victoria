@@ -1,10 +1,9 @@
 ---
 parameter_defaults:
-  ContainerHealthcheckDisabled: true
-  EnablePaunch: False
+  ContainerCli: podman
+  SELinuxMode: enforcing
   ConfigDebug: True
   NtpServer: pool.ntp.org
-  # Ceph
   CephAnsibleRepo: tripleo-centos-ceph-nautilus
   CephAnsiblePlaybookVerbosity: 3
   CephPoolDefaultSize: 1

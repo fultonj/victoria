@@ -8,7 +8,7 @@ LOG=1
 
 STACK=oc0
 DIR=~/config-download
-NODE_COUNT=3
+NODE_COUNT=8
 
 source ~/stackrc
 # -------------------------------------------------------
@@ -20,13 +20,15 @@ if [[ $(($HEAT + $DOWN)) -gt 1 ]]; then
 fi
 # -------------------------------------------------------
 if [[ $METAL -eq 1 ]]; then
-    # 4 minutes
     openstack overcloud node provision \
               --stack $STACK \
               --output deployed-metal-big.yaml \
-              metal.yaml
+              metal-big.yaml
+
+    sed -i s/\\/usr\\/share\\/openstack\\-tripleo\\-heat\\-/..\\/..\\//g \
+        deployed-metal-big.yaml
 else
-    echo "Assuming servers are provsioned or you ran no-metalsmith.sh"
+    echo "Assuming servers are provsioned"
 fi
 # -------------------------------------------------------
 # `openstack overcloud -v` should be passed along as
@@ -46,29 +48,29 @@ if [[ $HEAT -eq 1 ]]; then
             exit 1
         fi
     fi
-    # if metalsmith
-    #     -e ~/templates/environments/deployed-server-environment.yaml \
-    #     -e deployed-metal-big.yaml \
-    # else
-    #     -e no-metalsmith.yaml
-    time openstack overcloud -v deploy \
-         --stack $STACK \
-         --templates ~/templates/ \
-         -n ../network-data.yaml \
-         -e ~/templates/environments/deployed-server-environment.yaml \
-         -e ~/templates/environments/net-multiple-nics.yaml \
-         -e ~/templates/environments/network-isolation.yaml \
-         -e ~/templates/environments/network-environment.yaml \
-         -e ~/templates/environments/disable-telemetry.yaml \
-         -e ~/templates/environments/low-memory-usage.yaml \
-         -e ~/templates/environments/enable-swap.yaml \
-         -e ~/templates/environments/podman.yaml \
-         -e ~/templates/environments/ceph-ansible/ceph-ansible.yaml \
-         -e ~/generated-container-prepare.yaml \
-         -e ~/domain.yaml \
-         -e deployed-metal.yaml \
-         -e overrides.yaml \
-         --libvirt-type qemu
+    
+    time openstack overcloud \-v deploy \
+          --disable-validations \
+          --deployed-server \
+          --libvirt-type qemu \
+          --stack $STACK \
+          --templates ~/templates \
+          -r roles.yaml \
+          -n ../network-data.yaml \
+          -e ~/templates/environments/deployed-server-environment.yaml \
+          -e ~/templates/environments/network-isolation.yaml \
+          -e ~/templates/environments/network-environment.yaml \
+          -e ~/templates/environments/disable-telemetry.yaml \
+          -e ~/templates/environments/low-memory-usage.yaml \
+          -e ~/templates/environments/enable-swap.yaml \
+          -e ~/templates/environments/ceph-ansible/ceph-ansible.yaml \
+          -e ~/templates/environments/docker-ha.yaml \
+          -e ~/templates/environments/podman.yaml \
+          -e ~/containers-prepare-parameter.yaml \
+          -e ~/generated-container-prepare.yaml \
+          -e ~/oc0-domain.yaml \
+          -e deployed-metal-big.yaml \
+          -e overrides.yaml
 fi
 # -------------------------------------------------------
 if [[ $DOWN -eq 1 ]]; then
@@ -134,3 +136,4 @@ if [[ $DOWN -eq 1 ]]; then
 
    popd
 fi
+
