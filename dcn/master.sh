@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-# Assumes you have run ironic.sh
 CONTROL=1
 EXPORT=1
 DCN0=1
@@ -34,6 +33,11 @@ fi
 # -------------------------------------------------------
 if [[ $EXPORT -eq 1 ]]; then
     openstack overcloud export -f --stack control-plane
+
+    # hack around this bug for now
+    # sudo sed -i s/'storage_ip'/'storage_cloud_0_ip'/g \
+    #      /usr/lib/python3.6/site-packages/tripleoclient/export.py
+
     openstack overcloud export ceph -f --stack control-plane
 
     if [[ ! -e control-plane-export.yaml ]]; then

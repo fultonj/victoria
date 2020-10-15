@@ -39,7 +39,8 @@ if [[ $PUBLIC -eq 1 ]]; then
 fi
 
 if [[ $SCALEOUT -eq 1 ]]; then
-    NODE="${AZ}-distributedcomputehci-0.localdomain"
+    #NODE="${AZ}-distributedcomputehci-0.localdomain"
+    NODE=oc0-ceph-2.mydomain.tld
     echo "The SCALEOUT=1 option is enabled, removing $NODE from nova scheduler"
     # openstack compute service list
     openstack compute service set $NODE nova-compute --disable

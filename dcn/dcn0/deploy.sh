@@ -15,6 +15,18 @@ if [[ $(($HEAT + $DOWN)) -gt 1 ]]; then
     exit 1
 fi
 # -------------------------------------------------------
+METAL="../metalsmith/deployed-metal-${STACK}.yaml"
+if [[ ! -e $METAL ]]; then
+    echo "$METAL is missing. Deploying nodes with metalsmith"
+    pushd ../metalsmith
+    bash provision.sh $STACK
+    popd
+fi
+if [[ ! -e $METAL ]]; then
+    echo "$METAL is still missing. Aborting."
+    exit 1
+fi
+# -------------------------------------------------------
 if [[ ! -e dcn_roles.yaml ]]; then
     openstack overcloud roles generate DistributedComputeHCI DistributedComputeHCIScaleOut -o dcn_roles.yaml
 fi
@@ -29,17 +41,24 @@ if [[ $HEAT -eq 1 ]]; then
         ln -s /usr/share/openstack-tripleo-heat-templates ~/templates
     fi
     time openstack overcloud -v deploy \
+         --disable-validations \
+         --deployed-server \
          --stack $STACK \
          --config-download-timeout 240 \
          --templates ~/templates/ \
          -r dcn_roles.yaml \
+         -e ~/templates/environments/deployed-server-environment.yaml \
          -e ~/templates/environments/disable-telemetry.yaml \
          -e ~/templates/environments/low-memory-usage.yaml \
          -e ~/templates/environments/enable-swap.yaml \
+         -e ~/templates/environments/docker-ha.yaml \
          -e ~/templates/environments/podman.yaml \
          -e ~/templates/environments/ceph-ansible/ceph-ansible.yaml \
          -e ~/templates/environments/dcn-hci.yaml \
+         -e ~/containers-prepare-parameter.yaml \
          -e ~/generated-container-prepare.yaml \
+         -e ~/oc0-domain.yaml \
+         -e $METAL \
          -e ../control-plane-export.yaml \
          -e ../ceph-export-control-plane.yaml \
          -e ceph.yaml \
@@ -47,13 +66,11 @@ if [[ $HEAT -eq 1 ]]; then
          -e overrides.yaml \
          --libvirt-type qemu
 
-    exit $?
-         # Network isolation
-         # -n ~/victoria/network-data.yaml \
-         # -e ~/templates/environments/net-multiple-nics.yaml \
+    # network isol
+         # -n ../../network-data.yaml \
+         # -e ~/templates/environments/deployed-server-environment.yaml \
          # -e ~/templates/environments/network-isolation.yaml \
          # -e ~/templates/environments/network-environment.yaml \
-
 fi
 # -------------------------------------------------------
 if [[ $DOWN -eq 1 ]]; then

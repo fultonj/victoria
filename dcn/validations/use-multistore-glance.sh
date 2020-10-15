@@ -19,10 +19,14 @@ fi
 # Get image if missing
 NAME=cirros
 IMG=cirros-0.4.0-x86_64-disk.img
+RAW=cirros-0.4.0-x86_64-disk.raw
 URL=http://download.cirros-cloud.net/0.4.0/$IMG
 if [ ! -f $IMG ]; then
     echo "Could not find qemu image $img; downloading a copy."
     curl -L -# $URL > $IMG
+fi
+if [ ! -f $RAW ]; then
+    qemu-img convert -f qcow2 -O raw $IMG $RAW
 fi
 # -------------------------------------------------------
 OLD_ID=$(openstack image show $NAME -f value -c id)
@@ -36,8 +40,8 @@ glance stores-info
 
 glance image-create \
 --disk-format raw --container-format bare \
---name cirros --file cirros-0.4.0-x86_64-disk.raw \
---store default_backend
+--name cirros --file $RAW \
+--store central
 
 echo "- Create image in central"
 # glance --verbose image-create-via-import --disk-format qcow2 --container-format bare --name cirros --uri $URL --import-method web-download --stores default_backend,dcn0
