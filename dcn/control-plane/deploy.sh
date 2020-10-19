@@ -15,6 +15,18 @@ if [[ $(($HEAT + $DOWN)) -gt 1 ]]; then
     exit 1
 fi
 # -------------------------------------------------------
+METAL="../metalsmith/deployed-metal-${STACK}.yaml"
+if [[ ! -e $METAL ]]; then
+    echo "$METAL is missing. Deploying nodes with metalsmith"
+    pushd ../metalsmith
+    bash provision.sh $STACK
+    popd
+fi
+if [[ ! -e $METAL ]]; then
+    echo "$METAL is still missing. Aborting."
+    exit 1
+fi
+# -------------------------------------------------------
 if [[ ! -e control_plane_roles.yaml ]]; then
     openstack overcloud roles generate Controller ComputeHCI -o control_plane_roles.yaml
 fi
@@ -29,18 +41,25 @@ if [[ $HEAT -eq 1 ]]; then
         ln -s /usr/share/openstack-tripleo-heat-templates ~/templates
     fi
     time openstack overcloud -v deploy \
+         --disable-validations \
+         --deployed-server \
          --stack $STACK \
+         --templates ~/templates \
+         -r control_plane_roles.yaml \
          --config-download-timeout 240 \
          --templates ~/templates/ \
-         -r control_plane_roles.yaml \
+         -e ~/templates/environments/deployed-server-environment.yaml \
          -e ~/templates/environments/disable-telemetry.yaml \
          -e ~/templates/environments/low-memory-usage.yaml \
          -e ~/templates/environments/enable-swap.yaml \
+         -e ~/templates/environments/docker-ha.yaml \
          -e ~/templates/environments/podman.yaml \
          -e ~/templates/environments/ceph-ansible/ceph-ansible.yaml \
          -e ~/templates/environments/ceph-ansible/ceph-rgw.yaml \
+         -e ~/containers-prepare-parameter.yaml \
          -e ~/generated-container-prepare.yaml \
-         -e ~/domain.yaml \
+         -e ~/oc0-domain.yaml \
+         -e $METAL \
          -e ceph.yaml \
          -e overrides.yaml \
          --libvirt-type qemu
@@ -52,11 +71,9 @@ if [[ $HEAT -eq 1 ]]; then
     # -e ../ceph-export-2-stacks.yaml \
 
     # For network isolation
-    # -n ~/victoria/network-data.yaml \
-    # -e ~/templates/environments/net-multiple-nics.yaml \
+    # -n ../../network-data.yaml \
     # -e ~/templates/environments/network-isolation.yaml \
     # -e ~/templates/environments/network-environment.yaml \
-
 fi
 # -------------------------------------------------------
 if [[ $DOWN -eq 1 ]]; then

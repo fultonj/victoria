@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-OVERALL=1
-CINDER=1
+OVERALL=0
+CINDER=0
 NOVA=1
 IMAGE=cirros
 #IMAGE=myserver-dcn0-snapshot
@@ -14,7 +14,7 @@ fi
 
 # Get MON
 source ~/stackrc
-MON=$(openstack server show control-plane-controller-0 -f value -c addresses | sed s/ctlplane=//g)
+MON=oc0-controller-0
 
 function run_on_mon {
     # since it will be run on the controller
@@ -66,7 +66,8 @@ if [ $NOVA -eq 1 ]; then
     chmod 600 ~/demokp_central.pem
 
     # have not yet created AZs, so specify non-dcn hypervisor
-    HYPERVISOR=$(openstack hypervisor list -f value -c "Hypervisor Hostname" | grep -v dcn)
+    #HYPERVISOR=$(openstack hypervisor list -f value -c "Hypervisor Hostname" | grep -v dcn)
+    HYPERVISOR=oc0-ceph-0.mydomain.tld
 
     openstack server create --hypervisor-hostname $HYPERVISOR --flavor m1.tiny --image $IMAGE --key-name demokp_central vm_central --nic net-id=$netid
 

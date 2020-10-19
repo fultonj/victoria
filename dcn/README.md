@@ -34,9 +34,6 @@ and roles.
 
 ## How to deploy it with TripleO
 
-FIXME: convert to metalsmith and new network
-
-- Tag nodes with [ironic.sh](ironic.sh)
 - Run [master.sh](master.sh) which does the following:
   - Deploy control-plane with [control-plane/deploy.sh](control-plane/deploy.sh)
   - Create `control-plane-export.yaml` (`openstack overcloud export -f --stack control-plane`)
@@ -47,6 +44,10 @@ FIXME: convert to metalsmith and new network
 - Update control-plane/deploy.sh to use `ceph-export-2-stacks.yaml`
 - Update control-plane/deploy.sh to use [control-plane/glance_update.yaml](control-plane/glance_update.yaml)
 - Re-run control-plane/deploy.sh
+
+Each deploy script will use [metalsmith](metalsmith)
+to [provision](provision.sh) the nodes for each stack
+and the [kill](kill.sh) script will unprovision the nodes.
 
 ## Validations
 

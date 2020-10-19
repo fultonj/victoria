@@ -1,23 +1,13 @@
 ---
 parameter_defaults:
-  ContainerHealthcheckDisabled: true
-  NtpServer: pool.ntp.org
-  ControllerCount: 3
-  ComputeCount: 0
-  ComputeHCICount: 1
-  OvercloudControlFlavor: baremetal
-  OvercloudComputeFlavor: baremetal
-  OvercloudComputeHCIFlavor: baremetal
-  ControllerSchedulerHints:
-    'capabilities:node': '0-controller-%index%'
-  ComputeHCISchedulerHints:
-    'capabilities:node': '0-ceph-%index%'
-  CephAnsibleRepo: tripleo-centos-ceph-nautilus
-  EnablePaunch: False
-  ConfigDebug: True
-  CephClusterName: central
-  # Don't need the next 2 lines if you have
-  # https://review.opendev.org/#/c/721562
-  # ExtraConfig:
-  #   nova::cross_az_attach: false
+  ContainerCli: podman
   SELinuxMode: permissive
+  ConfigDebug: True
+  NtpServer: pool.ntp.org
+  CephAnsibleRepo: tripleo-centos-ceph-nautilus
+  CephClusterName: central
+  GlanceShowMultipleLocations: true
+  GlanceEnabledImportMethods: web-download,copy-image
+  GlanceBackend: rbd
+  GlanceStoreDescription: 'central rbd glance store'
+  GlanceBackendID: central

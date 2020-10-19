@@ -6,19 +6,24 @@
     show_output: true
     save_output: false
   hosts:
-    - control-plane-controller-0
-    - dcn0-distributedcomputehci-0
-    - dcn1-distributedcomputehci-0
+    - oc0-controller-0
+    - oc0-ceph-1
+    - oc0-ceph-3
   tasks:
     - name: Set cluster name for central
       set_fact:
         cluster: central
-      when: inventory_hostname == "control-plane-controller-0"
+      when: inventory_hostname == "oc0-controller-0"
 
-    - name: Set cluster name for dcn hosts
+    - name: Set cluster name for dcn0
       set_fact:
-        cluster: "{{ inventory_hostname.split('-')[0] }}"
-      when: inventory_hostname is regex("^dcn[0-9]+")
+        cluster: dcn0
+      when: inventory_hostname == "oc0-ceph-1"
+
+    - name: Set cluster name for dcn1
+      set_fact:
+        cluster: dcn1
+      when: inventory_hostname == "oc0-ceph-3"
 
     - name: Set rbd command fact
       set_fact:
